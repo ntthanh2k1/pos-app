@@ -1,11 +1,19 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
-import redis from "../../config/redis.config";
+import redisConfig from "../../config/redis.config";
 
-const createAccessToken = async (user: any, res: Response) => {
-  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: parseInt(process.env.ACCESS_TOKEN_TTL),
-  });
+const createAccessToken = async (tokenPayload: any, res: Response) => {
+  const accessToken = jwt.sign(
+    {
+      userId: tokenPayload.userId,
+      username: tokenPayload.username,
+      jti: tokenPayload.jti,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: parseInt(process.env.ACCESS_TOKEN_TTL),
+    }
+  );
 
   res.cookie("access_token", accessToken, {
     httpOnly: true,
@@ -17,15 +25,22 @@ const createAccessToken = async (user: any, res: Response) => {
   return accessToken;
 };
 
-const createRefreshToken = async (user: any, res: Response) => {
-  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: parseInt(process.env.REFRESH_TOKEN_TTL),
-  });
+const createRefreshToken = async (tokenPayload: any, res: Response) => {
+  const refreshToken = jwt.sign(
+    {
+      userId: tokenPayload.userId,
+      username: tokenPayload.username,
+      jti: tokenPayload.jti,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: parseInt(process.env.REFRESH_TOKEN_TTL),
+    }
+  );
 
-  await redis.set(
-    `rt:pos:${user.userId}:${user.jti}`,
+  await redisConfig.setValue(
+    `rt:pos:${tokenPayload.username}:${tokenPayload.jti}`,
     refreshToken,
-    "EX",
     parseInt(process.env.REFRESH_TOKEN_TTL)
   );
 

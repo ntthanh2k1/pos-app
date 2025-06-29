@@ -3,7 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import typeOrmConfig from "./config/db.config";
+import dbConfig from "./config/db.config";
 import errorHandler from "./middleware/error.middleware";
 import globalLimiter from "./middleware/rate-limit.middleware";
 import authRoutes from "./modules/auth/auth.route";
@@ -26,7 +26,7 @@ app.use(errorHandler);
 
 const startServer = async () => {
   try {
-    await typeOrmConfig.initialize();
+    await dbConfig.initialize();
     console.log("Data Source has been initialized!");
 
     app.listen(port, () => {
