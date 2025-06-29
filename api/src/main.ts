@@ -7,6 +7,7 @@ import dbConfig from "./config/db.config";
 import errorHandler from "./middleware/error.middleware";
 import globalLimiter from "./middleware/rate-limit.middleware";
 import authRoutes from "./modules/auth/auth.route";
+import userRoutes from "./modules/user/user.route";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(globalLimiter);
 
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(errorHandler);
 
