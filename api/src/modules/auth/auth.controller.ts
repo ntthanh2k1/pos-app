@@ -1,6 +1,6 @@
 import { Handler, NextFunction, Request, Response } from "express";
 import User from "../../entities/user.entity";
-import typeOrmConfig from "../../config/typeorm.config";
+import typeOrmConfig from "../../config/db.config";
 import createCode from "../../shared/utils/create-code";
 import { hashPassword, verifyPassword } from "../../shared/utils/password";
 import { createAccessToken, createRefreshToken } from "../../shared/utils/jwt";
