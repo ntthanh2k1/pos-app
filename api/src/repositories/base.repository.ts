@@ -2,7 +2,10 @@ import { Repository } from "typeorm";
 import IBaseRepository from "./base-repository.interface";
 import Pagination from "../shared/interfaces/pagination.interface";
 
-const baseRepository = <T>(repository: Repository<T>): IBaseRepository<T> => ({
+const baseRepository = <T>(
+  repository: Repository<T>,
+  primaryKey: keyof T
+): IBaseRepository<T> => ({
   create: async (data: Partial<T>): Promise<T> => {
     return await repository.save(data as any);
   },
@@ -12,7 +15,7 @@ const baseRepository = <T>(repository: Repository<T>): IBaseRepository<T> => ({
   },
 
   findById: async (id: number | string): Promise<T | null> => {
-    return await repository.findOne({ where: { id } } as any);
+    return await repository.findOne({ where: { [primaryKey]: id } } as any);
   },
 
   findOneBy: async (condition: Partial<T>): Promise<T | null> => {
@@ -20,16 +23,18 @@ const baseRepository = <T>(repository: Repository<T>): IBaseRepository<T> => ({
   },
 
   update: async (id: number | string, data: Partial<T>): Promise<T | null> => {
-    await repository.update(id, data as any);
-    return await repository.findOne({ where: { id } } as any);
+    await repository.update({ [primaryKey]: id } as any, data as any);
+    return await repository.findOne({ where: { [primaryKey]: id } } as any);
   },
 
   delete: async (id: number | string): Promise<void> => {
-    await repository.delete(id);
+    await repository.delete({ [primaryKey]: id } as any);
   },
 
   softDelete: async (id: number | string): Promise<T | null> => {
-    const existing = await repository.findOne({ where: { id } } as any);
+    const existing = await repository.findOne({
+      where: { [primaryKey]: id },
+    } as any);
     if (!existing) return null;
     return await repository.save({ ...(existing as any), is_deleted: true });
   },

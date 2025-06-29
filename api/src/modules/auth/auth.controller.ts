@@ -1,13 +1,16 @@
 import { Handler, NextFunction, Request, Response } from "express";
-import User from "../../entities/user.entity";
-import typeOrmConfig from "../../config/db.config";
 import createCode from "../../shared/utils/create-code";
 import { hashPassword, verifyPassword } from "../../shared/utils/password";
-import { createAccessToken, createRefreshToken } from "../../shared/utils/jwt";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import redis from "../../config/redis.config";
+import {
+  createAccessToken,
+  createRefreshToken,
+  verifyToken,
+} from "../../shared/utils/jwt";
+import { JwtPayload } from "jsonwebtoken";
+import userRepository from "../../repositories/user.repository";
+import redisConfig from "../../config/redis.config";
 
-const userRepository = typeOrmConfig.getRepository(User);
+// const userRepository = typeOrmConfig.getRepository(User);
 
 const register: Handler = async (
   req: Request,
@@ -17,7 +20,7 @@ const register: Handler = async (
   try {
     const { name, username, password, confirmPassword } = req.body;
 
-    const existingUser = await userRepository.findOne({ where: { username } });
+    const existingUser = await userRepository.findOneBy({ username });
 
     if (existingUser) {
       return res
@@ -35,7 +38,7 @@ const register: Handler = async (
     const userCode = createCode("USER");
     const hashedPassword = await hashPassword(password);
 
-    const newUser = await userRepository.save({
+    const newUser = await userRepository.create({
       user_code: userCode,
       name,
       username,
@@ -66,7 +69,7 @@ const login: Handler = async (
   try {
     const { username, password } = req.body;
 
-    const existingUser = await userRepository.findOne({ where: { username } });
+    const existingUser = await userRepository.findOneBy({ username });
 
     if (!existingUser) {
       return res
@@ -90,26 +93,84 @@ const login: Handler = async (
       username: existingUser.username,
       jti: crypto.randomUUID(),
     };
-
     const accessToken = await createAccessToken(tokenPayload, res);
     const refreshToken = await createRefreshToken(tokenPayload, res);
 
     res.status(200).json({
       success: true,
       message: "Login successfully.",
-      tokens: {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      },
+      accessToken: accessToken,
+      refreshToken: refreshToken,
       data: {
         user_id: existingUser.user_id,
-        user_code: existingUser.user_code,
-        name: existingUser.name,
         username: existingUser.username,
       },
     });
   } catch (error) {
     error.methodName = login.name;
+    next(error);
+  }
+};
+
+const refreshToken: Handler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const refreshToken = req.cookies["refresh_token"];
+
+    if (!refreshToken) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Refresh token not found." });
+    }
+
+    const decoded = verifyToken(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    ) as JwtPayload;
+
+    const redisRefreshToken = await redisConfig.getValue(
+      `rt:pos:${decoded.username}:${decoded.jti}`
+    );
+
+    if (redisRefreshToken !== refreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Refresh token not valid." });
+    }
+
+    const tokenPayload = {
+      userId: decoded.user_id,
+      username: decoded.username,
+      jti: decoded.jti,
+    };
+    const accessToken = await createAccessToken(tokenPayload, res);
+
+    res.status(200).json({
+      success: true,
+      message: "Refresh token successfully.",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      data: {
+        userId: decoded.user_id,
+        username: decoded.username,
+      },
+    });
+  } catch (error) {
+    if (
+      error.name === "TokenExpiredError" ||
+      error.name === "JsonWebTokenError"
+    ) {
+      res.status(401).json({
+        sucess: false,
+        message: "Access token invalid/expired.",
+      });
+      return;
+    }
+
+    error.methodName = refreshToken.name;
     next(error);
   }
 };
@@ -122,7 +183,7 @@ const logout: Handler = async (
   try {
     const user = req["user"];
 
-    await redis.del(`rt:pos:${user.userId}:${user.jti}`);
+    await redisConfig.deleteValue(`rt:pos:${user.username}:${user.jti}`);
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 
@@ -151,4 +212,58 @@ const getAuthUser: Handler = async (
   }
 };
 
-export { register, login, logout, getAuthUser };
+const changePassword: Handler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const user = req["user"];
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    const existingUser = await userRepository.findById(user.userId);
+
+    if (!existingUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const isPasswordValid = await verifyPassword(
+      existingUser.password,
+      currentPassword
+    );
+
+    if (!isPasswordValid) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Current password not valid." });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password and confirm password do not match.",
+      });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await userRepository.update(user.userId, {
+      password: hashedPassword,
+    });
+
+    await redisConfig.deleteKeysByPattern(`rt:pos:${user.username}:*`);
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
+
+    res
+      .status(200)
+      .json({ success: true, message: "Change password successfully." });
+  } catch (error) {
+    error.methodName = changePassword.name;
+    next(error);
+  }
+};
+
+export { register, login, refreshToken, logout, getAuthUser, changePassword };
