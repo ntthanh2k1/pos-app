@@ -3,7 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import typeOrmConfig from "./config/typeorm.config";
+import typeOrmConfig from "./config/db.config";
 import errorHandler from "./middleware/error.middleware";
 import globalLimiter from "./middleware/rate-limit.middleware";
 import authRoutes from "./modules/auth/auth.route";

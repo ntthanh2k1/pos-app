@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 
 dotenv.config();
 
-const typeOrmConfig = new DataSource({
+const dbConfig = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -15,4 +15,4 @@ const typeOrmConfig = new DataSource({
   synchronize: true,
 });
 
-export default typeOrmConfig;
+export default dbConfig;
