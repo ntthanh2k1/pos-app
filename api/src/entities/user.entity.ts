@@ -5,26 +5,26 @@ class User {
   @PrimaryGeneratedColumn("uuid")
   user_id: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   user_code: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   username: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   password: string;
-
-  @Column({ nullable: true })
-  image: string;
 
   @Column({ nullable: true })
   phone: string;
 
   @Column({ nullable: true })
   email: string;
+
+  @Column({ nullable: true })
+  image: string;
 
   @Column({ nullable: true })
   identity_number: string;
