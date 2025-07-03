@@ -1,45 +1,81 @@
 import PasswordInput from "@/components/form/password-input";
-import {
-  Button,
-  Field,
-  FieldRequiredIndicator,
-  Flex,
-  Input,
-  Text,
-} from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import TextInput from "@/components/form/text-input";
+import { Button, Flex, Text } from "@chakra-ui/react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const [registerForm, setRegisterForm] = useState({
+    name: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setRegisterForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log(registerForm);
+
+    navigate("/login");
+  };
+
   return (
     <>
       <Text fontSize="2xl" fontWeight="semibold" mb="3">
         Register
       </Text>
 
-      <Field.Root required mb="3">
-        <Field.Label>
-          Name <FieldRequiredIndicator />
-        </Field.Label>
-        <Input placeholder="Enter name" />
-      </Field.Root>
+      <form onSubmit={handleRegister} className="w-full">
+        <TextInput
+          name="name"
+          label="Name"
+          required
+          placeholder="Enter name"
+          value={registerForm.name}
+          onChange={handleChange}
+        />
 
-      <Field.Root required mb="3">
-        <Field.Label>
-          Username <FieldRequiredIndicator />
-        </Field.Label>
-        <Input placeholder="Enter username" />
-      </Field.Root>
+        <TextInput
+          name="username"
+          label="Username"
+          required
+          placeholder="Enter username"
+          value={registerForm.username}
+          onChange={handleChange}
+        />
 
-      <PasswordInput placeholder="Enter password" />
+        <PasswordInput
+          name="password"
+          label="Password"
+          required
+          placeholder="Enter password"
+          value={registerForm.password}
+          onChange={handleChange}
+        />
 
-      <PasswordInput placeholder="Enter confirm password" />
+        <PasswordInput
+          name="confirmPassword"
+          label="Confirm password"
+          required
+          placeholder="Enter confirm password"
+          value={registerForm.confirmPassword}
+          onChange={handleChange}
+        />
 
-      <Button w="full" mb="3">
-        Register
-      </Button>
+        <Button type="submit" w="full" mb="3">
+          Register
+        </Button>
+      </form>
 
       <Flex w="full" textAlign="left">
-        Already have an account?&nbsp;
+        <Text>Already have an account?&nbsp;</Text>
         <Link to="/login">
           <Text fontWeight="semibold">Login</Text>
         </Link>

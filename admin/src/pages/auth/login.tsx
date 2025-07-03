@@ -1,14 +1,8 @@
-import {
-  Button,
-  Field,
-  FieldRequiredIndicator,
-  Flex,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordInput from "@/components/form/password-input";
 import { useState } from "react";
+import TextInput from "@/components/form/text-input";
 
 const Login = () => {
   const [loginForm, setLoginForm] = useState({
@@ -25,43 +19,48 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(loginForm);
+
     nagivate("/");
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <>
       <Text fontSize="2xl" fontWeight="semibold" mb="3">
         Login
       </Text>
 
-      <Field.Root required mb="3">
-        <Field.Label>
-          Username <FieldRequiredIndicator />
-        </Field.Label>
-        <Input
+      <form onSubmit={handleLogin} className="w-full">
+        <TextInput
+          name="username"
+          label="Username"
+          required
           placeholder="Enter username"
           value={loginForm.username}
           onChange={handleChange}
         />
-      </Field.Root>
 
-      <PasswordInput
-        placeholder="Enter password"
-        value={loginForm.password}
-        onChange={handleChange}
-      />
+        <PasswordInput
+          name="password"
+          label="Password"
+          required
+          placeholder="Enter password"
+          value={loginForm.password}
+          onChange={handleChange}
+        />
 
-      <Button type="submit" w="full" mb="3">
-        Login
-      </Button>
+        <Button type="submit" w="full" mb="3">
+          Login
+        </Button>
+      </form>
 
       <Flex w="full" textAlign="left">
-        Don't have an account?&nbsp;
+        <Text>Don't have an account?&nbsp;</Text>
         <Link to="/register">
           <Text fontWeight="semibold">Register</Text>
         </Link>
       </Flex>
-    </form>
+    </>
   );
 };
 

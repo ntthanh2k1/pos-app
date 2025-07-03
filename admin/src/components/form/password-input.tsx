@@ -7,14 +7,14 @@ import {
 import { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 
-const PasswordInput = ({ ...rest }: any) => {
+const PasswordInput = ({ label, required, ...rest }: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const EyeIcon = showPassword ? IoEyeOff : IoEye;
 
   return (
-    <Field.Root required mb="5">
+    <Field.Root required={required} mb="3">
       <Field.Label>
-        Password <FieldRequiredIndicator />
+        {label} {required && <FieldRequiredIndicator />}
       </Field.Label>
       <InputGroup
         endElement={
