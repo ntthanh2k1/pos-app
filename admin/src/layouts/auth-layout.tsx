@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
@@ -10,13 +10,7 @@ const AuthLayout = () => {
       justify="flex-start"
       pt="12"
     >
-      <Text
-        top="50px"
-        textAlign="center"
-        fontSize="3xl"
-        fontWeight="bold"
-        mb="12"
-      >
+      <Text textAlign="center" fontSize="3xl" fontWeight="bold" pb="12">
         Welcome to Shroomie POS
       </Text>
 
