@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 const MainLayout = () => {
   return (
     <Flex minH="100vh">
-      <Box w="60" borderEnd="solid">
+      <Box w="56" borderEnd="solid">
         <Sidebar />
       </Box>
 

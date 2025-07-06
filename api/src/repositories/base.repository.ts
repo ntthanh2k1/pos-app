@@ -1,6 +1,7 @@
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import IBaseRepository from "./base-repository.interface";
-import Pagination from "../shared/interfaces/pagination.interface";
+import FilterData from "../shared/interfaces/filter-data.interface";
+import PaginateData from "../shared/interfaces/paginate-data.interface";
 
 const baseRepository = <T>(
   repository: Repository<T>,
@@ -10,21 +11,70 @@ const baseRepository = <T>(
     return await repository.save(data as any);
   },
 
-  findAll: async (): Promise<T[]> => {
-    return await repository.find();
+  getAll: async (filterData: FilterData<T>): Promise<PaginateData<T>> => {
+    const { page, limit, search, searchColumns, filters, orderBy, orderDir } =
+      filterData;
+    const queryBuilder = repository.createQueryBuilder("entity");
+
+    if (search && searchColumns?.length) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          searchColumns.forEach((col, idx) => {
+            const param = `search${idx}`;
+            const colStr = col.toString().includes(".")
+              ? col
+              : `entity.${col as string}`;
+            qb.orWhere(`entity.${colStr as string}::text ILIKE :${param}`, {
+              [param]: `%${search}%`,
+            });
+          });
+        })
+      );
+    }
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+        }
+      });
+    }
+
+    if (orderBy && orderDir) {
+      queryBuilder.orderBy(`entity.${orderBy as string}`, orderDir);
+    } else {
+      queryBuilder.orderBy("entity.created_at", "DESC");
+    }
+
+    if (page && limit) {
+      queryBuilder.skip((page - 1) * limit).take(limit);
+    }
+
+    const [data, totalRecords] = await queryBuilder.getManyAndCount();
+
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    return {
+      data,
+      page,
+      limit,
+      totalRecords,
+      totalPages,
+      hasPrev: page > 1,
+      hasNext: page < totalPages,
+    };
   },
 
-  findById: async (id: number | string): Promise<T | null> => {
-    return await repository.findOne({ where: { [primaryKey]: id } } as any);
-  },
-
-  findOneBy: async (condition: Partial<T>): Promise<T | null> => {
+  getOneBy: async (condition: Partial<T>): Promise<T | null> => {
     return await repository.findOne({ where: condition } as any);
   },
 
   update: async (id: number | string, data: Partial<T>): Promise<T | null> => {
-    await repository.update({ [primaryKey]: id } as any, data as any);
-    return await repository.findOne({ where: { [primaryKey]: id } } as any);
+    const existing = await repository.findOne({
+      where: { [primaryKey]: id },
+    } as any);
+    if (!existing) return null;
+    return await repository.save({ ...(existing as any), ...(data as any) });
   },
 
   delete: async (id: number | string): Promise<void> => {
@@ -37,32 +87,6 @@ const baseRepository = <T>(
     } as any);
     if (!existing) return null;
     return await repository.save({ ...(existing as any), is_deleted: true });
-  },
-
-  paginate: async (
-    page: number,
-    limit: number,
-    where: Partial<T> = {}
-  ): Promise<Pagination<T>> => {
-    const [data, total] = await repository.findAndCount({
-      where: where as any,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-
-    const totalPages = Math.ceil(total / limit);
-    const hasPrev = page > 1;
-    const hasNext = page < totalPages;
-
-    return {
-      data,
-      page,
-      limit,
-      total,
-      totalPages,
-      hasPrev,
-      hasNext,
-    };
   },
 });
 

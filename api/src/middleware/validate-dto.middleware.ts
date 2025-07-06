@@ -2,10 +2,14 @@ import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 
-const validateDto = (dto: any) => {
+const validateDto = (
+  dto: any,
+  source: "body" | "query" | "params" = "body"
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const dtoInstance = plainToInstance(dto, req.body);
+      const data = req[source];
+      const dtoInstance = plainToInstance(dto, data);
       const errors = await validate(dtoInstance, {
         whitelist: true,
         forbidNonWhitelisted: true,
@@ -23,7 +27,8 @@ const validateDto = (dto: any) => {
         return;
       }
 
-      req.body = dtoInstance;
+      Object.assign(req[source], dtoInstance);
+
       next();
     } catch (error) {
       error.methodName = validateDto.name;

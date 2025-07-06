@@ -1,11 +1,17 @@
-interface Pagination<T> {
+interface PaginateData<T> {
   data: T[];
+
   page: number;
+
   limit: number;
-  total: number;
+
+  totalRecords: number;
+
   totalPages: number;
+
   hasPrev: boolean;
+
   hasNext: boolean;
 }
 
-export default Pagination;
+export default PaginateData;

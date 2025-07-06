@@ -5,12 +5,10 @@ import {
   createAccessToken,
   createRefreshToken,
   verifyToken,
-} from "../../shared/utils/jwt";
+} from "../../shared/utils/token";
 import { JwtPayload } from "jsonwebtoken";
 import userRepository from "../../repositories/user.repository";
 import redisConfig from "../../config/redis.config";
-
-// const userRepository = typeOrmConfig.getRepository(User);
 
 const register: Handler = async (
   req: Request,
@@ -20,7 +18,7 @@ const register: Handler = async (
   try {
     const { name, username, password, confirmPassword } = req.body;
 
-    const existingUser = await userRepository.findOneBy({ username });
+    const existingUser = await userRepository.getOneBy({ username });
 
     if (existingUser) {
       return res
@@ -39,7 +37,7 @@ const register: Handler = async (
     const hashedPassword = await hashPassword(password);
 
     const newUser = await userRepository.create({
-      user_code: userCode,
+      code: userCode,
       name,
       username,
       password: hashedPassword,
@@ -50,7 +48,7 @@ const register: Handler = async (
       message: "User created successfully.",
       data: {
         user_id: newUser.user_id,
-        user_code: newUser.user_code,
+        user_code: newUser.code,
         name: newUser.name,
         username: newUser.username,
       },
@@ -69,7 +67,7 @@ const login: Handler = async (
   try {
     const { username, password } = req.body;
 
-    const existingUser = await userRepository.findOneBy({ username });
+    const existingUser = await userRepository.getOneBy({ username });
 
     if (!existingUser) {
       return res
@@ -221,7 +219,9 @@ const changePassword: Handler = async (
     const user = req["user"];
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    const existingUser = await userRepository.findById(user.userId);
+    const existingUser = await userRepository.getOneBy({
+      user_id: user.userId,
+    });
 
     if (!existingUser) {
       return res

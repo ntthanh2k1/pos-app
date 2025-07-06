@@ -5,8 +5,8 @@ import CreateUserDto from "./dtos/create-user.dto";
 import {
   createUser,
   deleteUser,
-  findAllUsers,
-  findUserById,
+  getAllUsers,
+  getUserById,
   updateUser,
 } from "./user.controller";
 import UpdateUserDto from "./dtos/update-user.dto";
@@ -16,8 +16,8 @@ const router = express.Router();
 router.use(authorize);
 
 router.post("/", validateDto(CreateUserDto), createUser);
-router.get("/", findAllUsers);
-router.get("/:id", findUserById);
+router.get("/", getAllUsers);
+router.get("/:id", getUserById);
 router.patch("/:id", validateDto(UpdateUserDto), updateUser);
 router.delete("/:id", deleteUser);
 

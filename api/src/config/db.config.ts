@@ -15,4 +15,14 @@ const dbConfig = new DataSource({
   synchronize: true,
 });
 
-export default dbConfig;
+const connectDB = async () => {
+  try {
+    await dbConfig.initialize();
+    console.log("Database connected successfully.");
+  } catch (error) {
+    console.log("Error connecting to database.", error);
+    process.exit(1);
+  }
+};
+
+export { dbConfig, connectDB };
