@@ -1,15 +1,13 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 
 class CreateUnitDto {
   @IsNotEmpty()
-  @IsString()
   name: string;
 
   @IsNotEmpty()
-  @IsString()
   symbol: string;
 
-  @IsString()
+  @IsOptional()
   note: string;
 }
 

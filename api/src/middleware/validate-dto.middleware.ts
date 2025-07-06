@@ -9,6 +9,15 @@ const validateDto = (
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req[source];
+
+      if (data === null || typeof data !== "object") {
+        res.status(400).json({
+          success: false,
+          message: "Request data format not valid.",
+        });
+        return;
+      }
+
       const dtoInstance = plainToInstance(dto, data);
       const errors = await validate(dtoInstance, {
         whitelist: true,

@@ -5,89 +5,117 @@ import PaginateData from "../shared/interfaces/paginate-data.interface";
 
 const baseRepository = <T>(
   repository: Repository<T>,
-  primaryKey: keyof T
-): IBaseRepository<T> => ({
-  create: async (data: Partial<T>): Promise<T> => {
-    return await repository.save(data as any);
-  },
+  primaryKey: keyof T,
+  softDeleteKey: keyof T = "is_deleted" as keyof T
+): IBaseRepository<T> => {
+  const updateEntity = async (id: number | string, data: Partial<T>) => {
+    const existing = await repository.findOne({
+      where: { [primaryKey]: id, [softDeleteKey]: false } as any,
+    } as any);
 
-  getAll: async (filterData: FilterData<T>): Promise<PaginateData<T>> => {
-    const { page, limit, search, searchColumns, filters, orderBy, orderDir } =
-      filterData;
-    const queryBuilder = repository.createQueryBuilder("entity");
+    if (!existing) {
+      return null;
+    }
 
-    if (search && searchColumns?.length) {
-      queryBuilder.andWhere(
-        new Brackets((qb) => {
-          searchColumns.forEach((col, idx) => {
-            const param = `search${idx}`;
-            const colStr = col.toString().includes(".")
-              ? col
-              : `entity.${col as string}`;
-            qb.orWhere(`entity.${colStr as string}::text ILIKE :${param}`, {
-              [param]: `%${search}%`,
+    return await repository.save({ ...existing, ...data } as any);
+  };
+
+  return {
+    create: async (data: Partial<T>): Promise<T> => {
+      return await repository.save(data as any);
+    },
+
+    getAll: async (filterData: FilterData<T>): Promise<PaginateData<T>> => {
+      const { page, limit, search, searchColumns, filters, orderBy, orderDir } =
+        filterData;
+      const queryBuilder = repository.createQueryBuilder("entity");
+
+      if (search && searchColumns?.length) {
+        queryBuilder.andWhere(
+          new Brackets((qb) => {
+            searchColumns.forEach((col, idx) => {
+              const param = `search${idx}`;
+              const colStr = col.toString().includes(".")
+                ? col
+                : `entity.${col as string}`;
+              qb.orWhere(`entity.${colStr as string}::text ILIKE :${param}`, {
+                [param]: `%${search}%`,
+              });
             });
-          });
-        })
-      );
-    }
+          })
+        );
+      }
 
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined) {
-          queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+      if (filters) {
+        if (filters[softDeleteKey] === undefined) {
+          (filters[softDeleteKey] as boolean) = false;
         }
-      });
-    }
 
-    if (orderBy && orderDir) {
-      queryBuilder.orderBy(`entity.${orderBy as string}`, orderDir);
-    } else {
-      queryBuilder.orderBy("entity.created_at", "DESC");
-    }
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+          }
+        });
+      } else {
+        queryBuilder.andWhere(`entity.${softDeleteKey as string} = false`);
+      }
 
-    if (page && limit) {
-      queryBuilder.skip((page - 1) * limit).take(limit);
-    }
+      if (orderBy && orderDir) {
+        queryBuilder.orderBy(`entity.${orderBy as string}`, orderDir);
+      } else {
+        queryBuilder.orderBy("entity.created_at", "DESC");
+      }
 
-    const [data, totalRecords] = await queryBuilder.getManyAndCount();
+      if (page && limit) {
+        queryBuilder.skip((page - 1) * limit).take(limit);
+      }
 
-    const totalPages = Math.ceil(totalRecords / limit);
+      const [data, totalRecords] = await queryBuilder.getManyAndCount();
 
-    return {
-      data,
-      page,
-      limit,
-      totalRecords,
-      totalPages,
-      hasPrev: page > 1,
-      hasNext: page < totalPages,
-    };
-  },
+      const totalPages = Math.ceil(totalRecords / limit);
 
-  getOneBy: async (condition: Partial<T>): Promise<T | null> => {
-    return await repository.findOne({ where: condition } as any);
-  },
+      return {
+        data,
+        page,
+        limit,
+        totalRecords,
+        totalPages,
+        hasPrev: page > 1,
+        hasNext: page < totalPages,
+      };
+    },
 
-  update: async (id: number | string, data: Partial<T>): Promise<T | null> => {
-    const existing = await repository.findOne({
-      where: { [primaryKey]: id },
-    } as any);
-    if (!existing) return null;
-    return await repository.save({ ...(existing as any), ...(data as any) });
-  },
+    getOneBy: async (condition: Partial<T>): Promise<T | null> => {
+      const where = { ...condition } as any;
 
-  delete: async (id: number | string): Promise<void> => {
-    await repository.delete({ [primaryKey]: id } as any);
-  },
+      if (where[softDeleteKey] === undefined) {
+        where[softDeleteKey] = false;
+      }
 
-  softDelete: async (id: number | string): Promise<T | null> => {
-    const existing = await repository.findOne({
-      where: { [primaryKey]: id },
-    } as any);
-    if (!existing) return null;
-    return await repository.save({ ...(existing as any), is_deleted: true });
-  },
-});
+      return await repository.findOne({ where } as any);
+    },
+
+    update: async (
+      id: number | string,
+      data: Partial<T>
+    ): Promise<T | null> => {
+      return await updateEntity(id, data);
+    },
+
+    softDelete: async (
+      id: number | string,
+      updatedBy: string
+    ): Promise<T | null> => {
+      return await updateEntity(id, {
+        [softDeleteKey]: true,
+        updated_by: updatedBy,
+      } as any);
+    },
+
+    delete: async (id: number | string): Promise<void> => {
+      await repository.delete({ [primaryKey]: id } as any);
+    },
+  };
+};
 
 export default baseRepository;

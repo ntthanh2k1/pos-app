@@ -17,7 +17,6 @@ const register: Handler = async (
 ): Promise<any> => {
   try {
     const { name, username, password, confirmPassword } = req.body;
-
     const existingUser = await userRepository.getOneBy({ username });
 
     if (existingUser) {
@@ -66,13 +65,18 @@ const login: Handler = async (
 ): Promise<any> => {
   try {
     const { username, password } = req.body;
-
     const existingUser = await userRepository.getOneBy({ username });
 
     if (!existingUser) {
       return res
         .status(404)
         .json({ success: false, message: `User ${username} does not exist.` });
+    }
+
+    if (!existingUser.is_active) {
+      return res
+        .status(400)
+        .json({ success: false, message: `User ${username} is not active.` });
     }
 
     const isPasswordValid = await verifyPassword(
@@ -100,7 +104,7 @@ const login: Handler = async (
       accessToken: accessToken,
       refreshToken: refreshToken,
       data: {
-        user_id: existingUser.user_id,
+        userId: existingUser.user_id,
         username: existingUser.username,
       },
     });
@@ -140,7 +144,7 @@ const refreshToken: Handler = async (
     }
 
     const tokenPayload = {
-      userId: decoded.user_id,
+      userId: decoded.userId,
       username: decoded.username,
       jti: decoded.jti,
     };
@@ -152,7 +156,7 @@ const refreshToken: Handler = async (
       accessToken: accessToken,
       refreshToken: refreshToken,
       data: {
-        userId: decoded.user_id,
+        userId: decoded.userId,
         username: decoded.username,
       },
     });

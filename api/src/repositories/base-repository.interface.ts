@@ -10,9 +10,9 @@ interface IBaseRepository<T> {
 
   update(id: number | string, data: Partial<T>): Promise<T | null>;
 
-  delete(id: number | string): Promise<void>;
+  softDelete(id: number | string, updatedBy: string): Promise<T | null>;
 
-  softDelete(id: number | string): Promise<T | null>;
+  delete(id: number | string): Promise<void>;
 }
 
 export default IBaseRepository;
