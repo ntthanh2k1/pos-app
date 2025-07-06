@@ -29,6 +29,6 @@ app.use("/api/units", unitRoutes);
 app.use(errorHandler);
 
 app.listen(port, async () => {
-  console.log(`http://localhost:${port}`);
   await connectDB();
+  console.log(`http://localhost:${port}`);
 });
