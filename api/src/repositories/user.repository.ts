@@ -1,4 +1,4 @@
-import { dbConfig } from "../config/db.config";
+import { dbConfig } from "../config/database/db.config";
 import User from "../entities/user.entity";
 import baseRepository from "./base.repository";
 

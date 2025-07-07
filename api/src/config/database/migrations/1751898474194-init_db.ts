@@ -1,0 +1,24 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class InitDb1751898474194 implements MigrationInterface {
+    name = 'InitDb1751898474194'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE "user" ("user_id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying(32), "name" character varying(128), "username" character varying(64), "password" character varying(256), "phone" character varying(32), "email" character varying(128), "image" character varying(256), "identity_number" character varying(32), "tax_number" character varying(32), "gender" boolean NOT NULL DEFAULT true, "birthdate" TIMESTAMP, "address" character varying(256), "note" character varying(256), "is_active" boolean NOT NULL DEFAULT true, "is_deleted" boolean NOT NULL DEFAULT false, "created_by" character varying(256), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_by" character varying(256), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_c5f78ad8f82e492c25d07f047a5" UNIQUE ("code"), CONSTRAINT "UQ_78a916df40e02a9deb1c4b75edb" UNIQUE ("username"), CONSTRAINT "PK_758b8ce7c18b9d347461b30228d" PRIMARY KEY ("user_id"))`);
+        await queryRunner.query(`CREATE TABLE "category_item" ("category_item_id" uuid NOT NULL DEFAULT uuid_generate_v4(), "parent_id" uuid, "code" character varying(32), "name" character varying(128), "note" character varying(256), "is_active" boolean NOT NULL DEFAULT true, "is_deleted" boolean NOT NULL DEFAULT false, "created_by" character varying(256), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_by" character varying(256), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_20dc238325e6462e759edb17728" UNIQUE ("code"), CONSTRAINT "PK_fe0de28cf1989243353f8a155c4" PRIMARY KEY ("category_item_id"))`);
+        await queryRunner.query(`CREATE TABLE "item" ("item_id" uuid NOT NULL DEFAULT uuid_generate_v4(), "category_item_id" uuid, "unit_id" uuid, "code" character varying(32), "name" character varying(128), "image" character varying(256), "cost" integer NOT NULL DEFAULT '0', "price" integer NOT NULL DEFAULT '0', "note" character varying(256), "is_active" boolean NOT NULL DEFAULT true, "is_deleted" boolean NOT NULL DEFAULT false, "created_by" character varying(256), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_by" character varying(256), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_ee4429a8fe2b5758456617e1ef6" UNIQUE ("code"), CONSTRAINT "PK_8b21aa99996acd87a00c0ce553a" PRIMARY KEY ("item_id"))`);
+        await queryRunner.query(`CREATE TABLE "unit" ("unit_id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying(32), "name" character varying(128), "symbol" character varying(32), "note" character varying(256), "is_active" boolean NOT NULL DEFAULT true, "is_deleted" boolean NOT NULL DEFAULT false, "created_by" character varying(256), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_by" character varying(256), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_8893a61126ad0507e5d6a63ecb3" PRIMARY KEY ("unit_id"))`);
+        await queryRunner.query(`CREATE TABLE "branch" ("branch_id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying(32), "name" character varying(128), "phone" character varying(32), "email" character varying(128), "tax_number" character varying(32), "address" character varying(256), "note" character varying(256), "is_active" boolean NOT NULL DEFAULT true, "is_deleted" boolean NOT NULL DEFAULT false, "created_by" character varying(256), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_by" character varying(256), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_638479fc29fab932b7ab0aea912" UNIQUE ("code"), CONSTRAINT "PK_30ca7f4dce440475a49dba3d48c" PRIMARY KEY ("branch_id"))`);
+        await queryRunner.query(`CREATE TABLE "inventory" ("inventory_id" uuid NOT NULL DEFAULT uuid_generate_v4(), "branch_id" uuid, "code" character varying(32), "name" character varying(128), "note" character varying(256), "is_active" boolean NOT NULL DEFAULT true, "is_deleted" boolean NOT NULL DEFAULT false, "created_by" character varying(256), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_by" character varying(256), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_8a8000ee25d9a92e819f2d4bece" UNIQUE ("code"), CONSTRAINT "PK_711db979ad954f0ab33e3eea53a" PRIMARY KEY ("inventory_id"))`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`DROP TABLE "inventory"`);
+        await queryRunner.query(`DROP TABLE "branch"`);
+        await queryRunner.query(`DROP TABLE "unit"`);
+        await queryRunner.query(`DROP TABLE "item"`);
+        await queryRunner.query(`DROP TABLE "category_item"`);
+        await queryRunner.query(`DROP TABLE "user"`);
+    }
+
+}

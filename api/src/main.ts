@@ -5,7 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import errorHandler from "./middleware/error.middleware";
 import globalLimiter from "./middleware/rate-limit.middleware";
-import { connectDB } from "./config/db.config";
+import { connectDB } from "./config/database/db.config";
 import authRoutes from "./modules/auth/auth.route";
 import userRoutes from "./modules/user/user.route";
 import unitRoutes from "./modules/unit/unit.route";

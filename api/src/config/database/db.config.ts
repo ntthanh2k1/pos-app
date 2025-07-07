@@ -12,7 +12,8 @@ const dbConfig = new DataSource({
   database: process.env.DB_NAME,
   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
   entities: ["src/entities/*.ts"],
-  synchronize: true,
+  migrations: ["src/config/database/migrations/*.ts"],
+  synchronize: false,
 });
 
 const connectDB = async () => {

@@ -60,11 +60,15 @@ class Item {
   // relation many item_ids to 1 category_item_id
   @ManyToOne(() => CategoryItem, (category_item) => category_item.items, {
     nullable: true,
+    createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: "category_item_id" })
   category_item: CategoryItem;
 
-  @ManyToOne(() => Unit, (unit) => unit.items, { nullable: true })
+  @ManyToOne(() => Unit, (unit) => unit.items, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
   @JoinColumn({ name: "unit_id" })
   unit: Unit;
 }

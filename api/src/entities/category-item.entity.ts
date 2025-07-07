@@ -48,15 +48,20 @@ class CategoryItem {
   // relation 1 parent_id has many category_item_ids
   @ManyToOne(() => CategoryItem, (parent) => parent.category_items, {
     nullable: true,
+    createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: "parent_id" })
   parent: CategoryItem;
 
-  @OneToMany(() => CategoryItem, (category_item) => category_item.parent)
+  @OneToMany(() => CategoryItem, (category_item) => category_item.parent, {
+    createForeignKeyConstraints: false,
+  })
   category_items: CategoryItem[];
 
   // relation 1 category_item_id has many item_ids
-  @OneToMany(() => Item, (item) => item.category_item)
+  @OneToMany(() => Item, (item) => item.category_item, {
+    createForeignKeyConstraints: false,
+  })
   items: Item[];
 }
 

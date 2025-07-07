@@ -8,7 +8,7 @@ import {
 } from "../../shared/utils/token";
 import { JwtPayload } from "jsonwebtoken";
 import userRepository from "../../repositories/user.repository";
-import redisConfig from "../../config/redis.config";
+import redisConfig from "../../config/redis/redis.config";
 
 const register: Handler = async (
   req: Request,

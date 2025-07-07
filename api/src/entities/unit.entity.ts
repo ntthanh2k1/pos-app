@@ -44,7 +44,9 @@ class Unit {
   updated_at: Date;
 
   // relation 1 unit_id has many item_ids
-  @OneToMany(() => Item, (item) => item.unit)
+  @OneToMany(() => Item, (item) => item.unit, {
+    createForeignKeyConstraints: false,
+  })
   items: Item[];
 }
 

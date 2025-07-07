@@ -1,6 +1,6 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
-import redisConfig from "../../config/redis.config";
+import redisConfig from "../../config/redis/redis.config";
 
 const createAccessToken = async (tokenPayload: any, res: Response) => {
   const accessToken = jwt.sign(
