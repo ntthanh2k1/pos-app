@@ -1,4 +1,4 @@
-import { Brackets, Repository } from "typeorm";
+import { Brackets, Repository, SelectQueryBuilder } from "typeorm";
 import IBaseRepository from "./base-repository.interface";
 import FilterData from "../shared/interfaces/filter-data.interface";
 import PaginateData from "../shared/interfaces/paginate-data.interface";
@@ -25,10 +25,17 @@ const baseRepository = <T>(
       return await repository.save(data as any);
     },
 
-    getAll: async (filterData: FilterData<T>): Promise<PaginateData<T>> => {
+    getAll: async (
+      filterData: FilterData<T>,
+      extendQuery?: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
+    ): Promise<PaginateData<T>> => {
       const { page, limit, search, searchColumns, filters, orderBy, orderDir } =
         filterData;
       const queryBuilder = repository.createQueryBuilder("entity");
+
+      if (extendQuery) {
+        extendQuery(queryBuilder);
+      }
 
       if (search && searchColumns?.length) {
         queryBuilder.andWhere(

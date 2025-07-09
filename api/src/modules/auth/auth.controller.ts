@@ -32,7 +32,7 @@ const register: Handler = async (
       });
     }
 
-    const userCode = createCode("USER");
+    const userCode = createCode("UR");
     const hashedPassword = await hashPassword(password);
 
     const newUser = await userRepository.create({

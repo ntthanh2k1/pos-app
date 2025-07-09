@@ -9,7 +9,7 @@ const createUnit: Handler = async (
 ): Promise<any> => {
   try {
     const { name, symbol, note } = req.body;
-    const unitCode = createCode("UNIT");
+    const unitCode = createCode("UT");
 
     const newUnit = await unitRepository.create({
       code: unitCode,

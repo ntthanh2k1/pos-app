@@ -1,4 +1,6 @@
 import express from "express";
+import validateDto from "../../middleware/validate-dto.middleware";
+import RegisterDto from "./dtos/register.dto";
 import {
   changePassword,
   getAuthUser,
@@ -7,8 +9,6 @@ import {
   refreshToken,
   register,
 } from "./auth.controller";
-import RegisterDto from "./dtos/register.dto";
-import validateDto from "../../middleware/validate-dto.middleware";
 import LoginDto from "./dtos/login.dto";
 import authorize from "../../middleware/auth.middleware";
 import ChangePasswordDto from "./dtos/change-password.dto";

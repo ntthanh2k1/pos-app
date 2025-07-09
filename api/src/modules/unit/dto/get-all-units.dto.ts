@@ -1,16 +1,13 @@
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class GetAllUnitsDto {
+class GetAllUnitsDto {
   @IsOptional()
-  @IsNumber()
-  page: number = 1;
+  page: number;
 
   @IsOptional()
-  @IsNumber()
-  limit: number = 10;
+  limit: number;
 
   @IsOptional()
-  @IsString()
   search: string;
 
   @IsOptional()
@@ -20,7 +17,6 @@ export class GetAllUnitsDto {
   is_active: boolean;
 
   @IsOptional()
-  @IsString()
   orderBy: string;
 
   @IsOptional()

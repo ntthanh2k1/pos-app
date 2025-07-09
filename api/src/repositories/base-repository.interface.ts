@@ -1,8 +1,12 @@
+import { SelectQueryBuilder } from "typeorm";
 import FilterData from "../shared/interfaces/filter-data.interface";
 import PaginateData from "../shared/interfaces/paginate-data.interface";
 
 interface IBaseRepository<T> {
-  getAll(filters: FilterData<T>): Promise<PaginateData<T>>;
+  getAll(
+    filters: FilterData<T>,
+    extendQuery?: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
+  ): Promise<PaginateData<T>>;
 
   getOneBy(condition: Partial<T>): Promise<T | null>;
 

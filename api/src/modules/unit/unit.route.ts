@@ -1,6 +1,6 @@
 import express from "express";
 import validateDto from "../../middleware/validate-dto.middleware";
-import CreateUnitDto from "./dtos/create-unit.dto";
+import CreateUnitDto from "./dto/create-unit.dto";
 import {
   createUnit,
   getAllUnits,
@@ -8,9 +8,9 @@ import {
   softDeleteUnit,
   updateUnit,
 } from "./unit.controller";
+import GetAllUnitsDto from "./dto/get-all-units.dto";
+import UpdateUnitDto from "./dto/update-unit.dto";
 import authorize from "../../middleware/auth.middleware";
-import GetAllUnitsDto from "./dtos/get-all-units.dto";
-import UpdateUnitDto from "./dtos/update-unit.dto";
 
 const router = express.Router();
 
