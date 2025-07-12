@@ -33,9 +33,6 @@ class Item {
   @Column({ type: "int", default: 0 })
   cost: number;
 
-  @Column({ type: "int", default: 0 })
-  price: number;
-
   @Column({ type: "varchar", length: 256, nullable: true })
   note: string;
 

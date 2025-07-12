@@ -17,9 +17,9 @@ const register: Handler = async (
 ): Promise<any> => {
   try {
     const { name, username, password, confirmPassword } = req.body;
-    const existingUser = await userRepository.getOneBy({ username });
+    const currentUser = await userRepository.getOneBy({ username });
 
-    if (existingUser) {
+    if (currentUser) {
       return res
         .status(400)
         .json({ success: false, message: `User ${username} already exists.` });
@@ -34,7 +34,6 @@ const register: Handler = async (
 
     const userCode = createCode("UR");
     const hashedPassword = await hashPassword(password);
-
     const newUser = await userRepository.create({
       code: userCode,
       name,
@@ -65,22 +64,22 @@ const login: Handler = async (
 ): Promise<any> => {
   try {
     const { username, password } = req.body;
-    const existingUser = await userRepository.getOneBy({ username });
+    const currentUser = await userRepository.getOneBy({ username });
 
-    if (!existingUser) {
+    if (!currentUser) {
       return res
         .status(404)
         .json({ success: false, message: `User ${username} not exists.` });
     }
 
-    if (!existingUser.is_active) {
+    if (!currentUser.is_active) {
       return res
         .status(400)
         .json({ success: false, message: `User ${username} not activates.` });
     }
 
     const isPasswordValid = await verifyPassword(
-      existingUser.password,
+      currentUser.password,
       password
     );
 
@@ -91,8 +90,8 @@ const login: Handler = async (
     }
 
     const tokenPayload = {
-      userId: existingUser.user_id,
-      username: existingUser.username,
+      userId: currentUser.user_id,
+      username: currentUser.username,
       jti: crypto.randomUUID(),
     };
     const accessToken = await createAccessToken(tokenPayload, res);
@@ -104,8 +103,8 @@ const login: Handler = async (
       accessToken: accessToken,
       refreshToken: refreshToken,
       data: {
-        userId: existingUser.user_id,
-        username: existingUser.username,
+        userId: currentUser.user_id,
+        username: currentUser.username,
       },
     });
   } catch (error) {
@@ -183,9 +182,11 @@ const logout: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const user = req["user"];
+    const authUser = req["user"];
 
-    await redisConfig.deleteValue(`rt:pos:${user.username}:${user.jti}`);
+    await redisConfig.deleteValue(
+      `rt:pos:${authUser.username}:${authUser.jti}`
+    );
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 
@@ -205,9 +206,9 @@ const getAuthUser: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const user = req["user"];
+    const authUser = req["user"];
 
-    res.status(200).json({ success: true, data: user });
+    res.status(200).json({ success: true, data: authUser });
   } catch (error) {
     error.methodName = getAuthUser.name;
     next(error);
@@ -220,21 +221,20 @@ const changePassword: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const user = req["user"];
+    const authUser = req["user"];
     const { currentPassword, newPassword, confirmPassword } = req.body;
-
-    const existingUser = await userRepository.getOneBy({
-      user_id: user.userId,
+    const currentUser = await userRepository.getOneBy({
+      user_id: authUser.userId,
     });
 
-    if (!existingUser) {
+    if (!currentUser) {
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
     }
 
     const isPasswordValid = await verifyPassword(
-      existingUser.password,
+      currentUser.password,
       currentPassword
     );
 
@@ -253,11 +253,11 @@ const changePassword: Handler = async (
 
     const hashedPassword = await hashPassword(newPassword);
 
-    await userRepository.update(user.userId, {
+    await userRepository.update(authUser.userId, {
       password: hashedPassword,
     });
 
-    await redisConfig.deleteKeysByPattern(`rt:pos:${user.username}:*`);
+    await redisConfig.deleteKeysByPattern(`rt:pos:${authUser.username}:*`);
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 

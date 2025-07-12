@@ -10,7 +10,6 @@ const createUnit: Handler = async (
   try {
     const { name, symbol, note } = req.body;
     const unitCode = createCode("UT");
-
     const newUnit = await unitRepository.create({
       code: unitCode,
       name,
@@ -38,7 +37,6 @@ const getUnits: Handler = async (
   try {
     const { page, limit, search, searchColumns, is_active, orderBy, orderDir } =
       req.query;
-
     const filters: Record<string, any> = {};
 
     if (typeof is_active === "boolean") {
@@ -59,6 +57,7 @@ const getUnits: Handler = async (
     };
 
     const units = await unitRepository.getAll(filterData);
+
     res.status(200).json({ success: true, ...units });
   } catch (error) {
     error.methodName = getUnits.name;
@@ -96,8 +95,7 @@ const updateUnit: Handler = async (
   try {
     const { id } = req.params;
     const { name, symbol, note, is_active } = req.body;
-
-    const updatedUnit = await unitRepository.update(id, {
+    const currentUnit = await unitRepository.update(id, {
       name,
       symbol,
       note,
@@ -105,7 +103,7 @@ const updateUnit: Handler = async (
       updated_by: req["user"].username,
     });
 
-    if (!updatedUnit) {
+    if (!currentUnit) {
       return res
         .status(404)
         .json({ success: false, message: "Unit not found." });
@@ -114,7 +112,7 @@ const updateUnit: Handler = async (
     res.status(200).json({
       success: true,
       message: "Update unit successfully.",
-      data: updatedUnit,
+      data: currentUnit,
     });
   } catch (error) {
     error.methodName = updateUnit.name;
@@ -129,12 +127,12 @@ const softDeleteUnit: Handler = async (
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const deletedUnit = await unitRepository.softDelete(
+    const currentUnit = await unitRepository.softDelete(
       id,
       req["user"].username
     );
 
-    if (!deletedUnit) {
+    if (!currentUnit) {
       return res
         .status(404)
         .json({ success: false, message: "Unit not found." });
@@ -143,7 +141,7 @@ const softDeleteUnit: Handler = async (
     res.status(200).json({
       success: true,
       message: "Delete unit successfully.",
-      data: deletedUnit,
+      data: currentUnit,
     });
   } catch (error) {
     error.methodName = softDeleteUnit.name;

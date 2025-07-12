@@ -11,13 +11,20 @@ const base = baseRepository<CategoryItem>(
 const categoryItemRepository = {
   ...base,
 
-  getAllCategoryItems: async (filterData: FilterData<CategoryItem>) => {
-    const categoryItems = await base.getAll(filterData, (qb) =>
+  getCategoryItems: async (filterData: FilterData<CategoryItem>) => {
+    return await base.getAll(filterData, (qb) =>
       qb
         .leftJoin("entity.parent", "parent")
         .addSelect(["parent.category_item_id", "parent.code", "parent.name"])
     );
-    return categoryItems;
+  },
+
+  getCategoryItem: async (condition: Partial<CategoryItem>) => {
+    return await base.getOneBy(condition, (qb) =>
+      qb
+        .leftJoin("entity.parent", "parent")
+        .addSelect(["parent.category_item_id", "parent.code", "parent.name"])
+    );
   },
 };
 

@@ -10,7 +10,6 @@ const createCategoryItem: Handler = async (
   try {
     const { parent_id, name, note } = req.body;
     const code = createCode("CIM");
-
     const newCategoryItem = await categoryItemRepository.create({
       parent_id,
       code,
@@ -46,7 +45,6 @@ const getCategoryItems: Handler = async (
       orderBy,
       orderDir,
     } = req.query;
-
     const filters: Record<string, any> = {};
 
     if (parent_id) {
@@ -69,8 +67,7 @@ const getCategoryItems: Handler = async (
       orderBy: orderBy ?? null,
       orderDir: orderDir ?? null,
     };
-
-    const categoryItems = await categoryItemRepository.getAllCategoryItems(
+    const categoryItems = await categoryItemRepository.getCategoryItems(
       filterData
     );
 
@@ -88,7 +85,7 @@ const getCategoryItem: Handler = async (
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const currentCategoryItem = await categoryItemRepository.getOneBy({
+    const currentCategoryItem = await categoryItemRepository.getCategoryItem({
       category_item_id: id,
     });
 
@@ -113,8 +110,7 @@ const updateCategoryItem: Handler = async (
   try {
     const { id } = req.params;
     const { parent_id, name, note, is_active } = req.body;
-
-    const updatedCategoryItem = await categoryItemRepository.update(id, {
+    const currentCategoryItem = await categoryItemRepository.update(id, {
       parent_id,
       name,
       note,
@@ -122,10 +118,16 @@ const updateCategoryItem: Handler = async (
       updated_by: req["user"].username,
     });
 
+    if (!currentCategoryItem) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Category item not found." });
+    }
+
     res.status(200).json({
       success: true,
       message: "Update category item successfully.",
-      data: updatedCategoryItem,
+      data: currentCategoryItem,
     });
   } catch (error) {
     error.methodName = updateCategoryItem.name;
@@ -140,12 +142,12 @@ const softDeleteCategoryItem: Handler = async (
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const deletedCategoryItem = await categoryItemRepository.softDelete(
+    const currentCategoryItem = await categoryItemRepository.softDelete(
       id,
       req["user"].username
     );
 
-    if (!deletedCategoryItem) {
+    if (!currentCategoryItem) {
       return res
         .status(404)
         .json({ success: false, message: "Category item not found." });
@@ -154,7 +156,7 @@ const softDeleteCategoryItem: Handler = async (
     res.status(200).json({
       success: true,
       message: "Delete category item successfully.",
-      data: deletedCategoryItem,
+      data: currentCategoryItem,
     });
   } catch (error) {
     error.methodName = softDeleteCategoryItem.name;

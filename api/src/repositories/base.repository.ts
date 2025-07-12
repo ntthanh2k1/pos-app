@@ -92,14 +92,27 @@ const baseRepository = <T>(
       };
     },
 
-    getOneBy: async (condition: Partial<T>): Promise<T | null> => {
+    getOneBy: async (
+      condition: Partial<T>,
+      extendQuery?: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
+    ): Promise<T | null> => {
+      const queryBuilder = repository.createQueryBuilder("entity");
+
+      if (extendQuery) {
+        extendQuery(queryBuilder);
+      }
+
       const where = { ...condition } as any;
 
       if (where[softDeleteKey] === undefined) {
         where[softDeleteKey] = false;
       }
 
-      return await repository.findOne({ where } as any);
+      Object.entries(where).forEach(([key, value]) => {
+        queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+      });
+
+      return await queryBuilder.getOne();
     },
 
     update: async (

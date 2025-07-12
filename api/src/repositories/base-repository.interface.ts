@@ -7,15 +7,13 @@ interface IBaseRepository<T> {
     filters: FilterData<T>,
     extendQuery?: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
   ): Promise<PaginateData<T>>;
-
-  getOneBy(condition: Partial<T>): Promise<T | null>;
-
+  getOneBy(
+    condition: Partial<T>,
+    extendQuery?: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
+  ): Promise<T | null>;
   create(data: Partial<T>): Promise<T>;
-
   update(id: number | string, data: Partial<T>): Promise<T | null>;
-
   softDelete(id: number | string, updatedBy: string): Promise<T | null>;
-
   delete(id: number | string): Promise<void>;
 }
 
