@@ -19,14 +19,18 @@ const createUnit: Handler = async (
       created_by: req["user"].username,
     });
 
-    res.status(201).json({ success: true, data: newUnit });
+    res.status(201).json({
+      success: true,
+      message: "Create unit successfully.",
+      data: newUnit,
+    });
   } catch (error) {
     error.methodName = createUnit.name;
     next(error);
   }
 };
 
-const getAllUnits: Handler = async (
+const getUnits: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -57,12 +61,12 @@ const getAllUnits: Handler = async (
     const units = await unitRepository.getAll(filterData);
     res.status(200).json({ success: true, ...units });
   } catch (error) {
-    error.methodName = getAllUnits.name;
+    error.methodName = getUnits.name;
     next(error);
   }
 };
 
-const getUnitById: Handler = async (
+const getUnit: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -79,7 +83,7 @@ const getUnitById: Handler = async (
 
     res.status(200).json({ success: true, data: currentUnit });
   } catch (error) {
-    error.methodName = getUnitById.name;
+    error.methodName = getUnit.name;
     next(error);
   }
 };
@@ -109,7 +113,7 @@ const updateUnit: Handler = async (
 
     res.status(200).json({
       success: true,
-      message: "Unit updated successfully.",
+      message: "Update unit successfully.",
       data: updatedUnit,
     });
   } catch (error) {
@@ -138,7 +142,7 @@ const softDeleteUnit: Handler = async (
 
     res.status(200).json({
       success: true,
-      message: "Unit deleted successfully.",
+      message: "Delete unit successfully.",
       data: deletedUnit,
     });
   } catch (error) {
@@ -147,4 +151,4 @@ const softDeleteUnit: Handler = async (
   }
 };
 
-export { createUnit, getAllUnits, getUnitById, updateUnit, softDeleteUnit };
+export { createUnit, getUnits, getUnit, updateUnit, softDeleteUnit };

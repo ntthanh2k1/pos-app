@@ -35,11 +35,32 @@ const deleteKeysByPattern = async (pattern: string) => {
   } while (cursor !== "0");
 };
 
+const deleteKeysByPatterns = async (patterns: string[]) => {
+  for (const pattern of patterns) {
+    let cursor = "0";
+
+    do {
+      const [nextCursor, keys] = await redis.scan(
+        cursor,
+        "MATCH",
+        pattern,
+        "COUNT",
+        "100"
+      );
+      if (keys.length > 0) {
+        await redis.del(...keys);
+      }
+      cursor = nextCursor;
+    } while (cursor !== "0");
+  }
+};
+
 const redisConfig = {
   getValue,
   setValue,
   deleteValue,
   deleteKeysByPattern,
+  deleteKeysByPatterns,
 };
 
 export default redisConfig;

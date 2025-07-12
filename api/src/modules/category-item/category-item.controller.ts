@@ -19,14 +19,18 @@ const createCategoryItem: Handler = async (
       created_by: req["user"].username,
     });
 
-    res.status(201).json({ success: true, data: newCategoryItem });
+    res.status(201).json({
+      success: true,
+      message: "Create category item successfully.",
+      data: newCategoryItem,
+    });
   } catch (error) {
     error.methodName = createCategoryItem.name;
     next(error);
   }
 };
 
-const getAllCategoryItems: Handler = async (
+const getCategoryItems: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -66,29 +70,37 @@ const getAllCategoryItems: Handler = async (
       orderDir: orderDir ?? null,
     };
 
-    const categoryItems = await categoryItemRepository.getAll(
-      filterData,
-      (qb) =>
-        qb
-          .leftJoin("entity.parent", "parent")
-          .addSelect(["parent.category_item_id", "parent.code", "parent.name"])
+    const categoryItems = await categoryItemRepository.getAllCategoryItems(
+      filterData
     );
 
     res.status(200).json({ success: true, ...categoryItems });
   } catch (error) {
-    error.methodName = getAllCategoryItems.name;
+    error.methodName = getCategoryItems.name;
     next(error);
   }
 };
 
-const getCategoryItemById: Handler = async (
+const getCategoryItem: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
+    const { id } = req.params;
+    const currentCategoryItem = await categoryItemRepository.getOneBy({
+      category_item_id: id,
+    });
+
+    if (!currentCategoryItem) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Category item not found." });
+    }
+
+    res.status(200).json({ success: true, data: currentCategoryItem });
   } catch (error) {
-    error.methodName = getCategoryItemById.name;
+    error.methodName = getCategoryItem.name;
     next(error);
   }
 };
@@ -99,6 +111,22 @@ const updateCategoryItem: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
+    const { id } = req.params;
+    const { parent_id, name, note, is_active } = req.body;
+
+    const updatedCategoryItem = await categoryItemRepository.update(id, {
+      parent_id,
+      name,
+      note,
+      is_active,
+      updated_by: req["user"].username,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Update category item successfully.",
+      data: updatedCategoryItem,
+    });
   } catch (error) {
     error.methodName = updateCategoryItem.name;
     next(error);
@@ -111,6 +139,23 @@ const softDeleteCategoryItem: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
+    const { id } = req.params;
+    const deletedCategoryItem = await categoryItemRepository.softDelete(
+      id,
+      req["user"].username
+    );
+
+    if (!deletedCategoryItem) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Category item not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Delete category item successfully.",
+      data: deletedCategoryItem,
+    });
   } catch (error) {
     error.methodName = softDeleteCategoryItem.name;
     next(error);
@@ -119,8 +164,8 @@ const softDeleteCategoryItem: Handler = async (
 
 export {
   createCategoryItem,
-  getAllCategoryItems,
-  getCategoryItemById,
+  getCategoryItems,
+  getCategoryItem,
   updateCategoryItem,
   softDeleteCategoryItem,
 };

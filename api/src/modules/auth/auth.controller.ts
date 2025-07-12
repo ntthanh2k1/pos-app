@@ -28,7 +28,7 @@ const register: Handler = async (
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "Password and confirm password do not match.",
+        message: "Password and confirm password not match.",
       });
     }
 
@@ -44,7 +44,7 @@ const register: Handler = async (
 
     res.status(201).json({
       success: true,
-      message: "User created successfully.",
+      message: "Register successfully.",
       data: {
         user_id: newUser.user_id,
         user_code: newUser.code,
@@ -70,13 +70,13 @@ const login: Handler = async (
     if (!existingUser) {
       return res
         .status(404)
-        .json({ success: false, message: `User ${username} does not exist.` });
+        .json({ success: false, message: `User ${username} not exists.` });
     }
 
     if (!existingUser.is_active) {
       return res
         .status(400)
-        .json({ success: false, message: `User ${username} is not active.` });
+        .json({ success: false, message: `User ${username} not activates.` });
     }
 
     const isPasswordValid = await verifyPassword(
@@ -87,7 +87,7 @@ const login: Handler = async (
     if (!isPasswordValid) {
       return res
         .status(400)
-        .json({ success: false, message: " Password not valid." });
+        .json({ success: false, message: "Password not valid." });
     }
 
     const tokenPayload = {
@@ -167,7 +167,7 @@ const refreshToken: Handler = async (
     ) {
       res.status(401).json({
         sucess: false,
-        message: "Access token invalid/expired.",
+        message: "Refresh token not valid.",
       });
       return;
     }
@@ -247,7 +247,7 @@ const changePassword: Handler = async (
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "New password and confirm password do not match.",
+        message: "New password and confirm password not match.",
       });
     }
 

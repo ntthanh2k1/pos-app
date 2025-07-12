@@ -10,6 +10,7 @@ import authRoutes from "./modules/auth/auth.route";
 import userRoutes from "./modules/user/user.route";
 import unitRoutes from "./modules/unit/unit.route";
 import CategoryItemRoutes from "./modules/category-item/category-item.route";
+import ItemRoutes from "./modules/item/item.route";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/units", unitRoutes);
 app.use("/api/category-items", CategoryItemRoutes);
+app.use("/api/items", ItemRoutes);
 
 app.use(errorHandler);
 

@@ -27,7 +27,7 @@ const validateDto = (
       if (errors.length > 0) {
         res.status(400).json({
           success: false,
-          message: "Validation failed.",
+          message: "Fail to validate request data.",
           errors: errors.map((e) => ({
             field: e.property,
             messages: Object.values(e.constraints || {}),

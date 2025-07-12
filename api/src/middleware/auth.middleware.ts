@@ -32,7 +32,7 @@ const authorize = async (req: Request, res: Response, next: NextFunction) => {
     ) {
       res.status(401).json({
         sucess: false,
-        message: "Access token invalid/expired.",
+        message: "Access token not valid.",
       });
       return;
     }
