@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import BranchInventory from "./branch-inventory.entity";
 
 @Entity("branch")
 class Branch {
@@ -49,6 +51,15 @@ class Branch {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(
+    () => BranchInventory,
+    (branch_inventory) => branch_inventory.branch,
+    {
+      createForeignKeyConstraints: false,
+    }
+  )
+  branch_inventories: BranchInventory[];
 }
 
 export default Branch;

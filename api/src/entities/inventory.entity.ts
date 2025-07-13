@@ -2,17 +2,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import BranchInventory from "./branch-inventory.entity";
 
 @Entity("inventory")
 class Inventory {
   @PrimaryGeneratedColumn("uuid")
   inventory_id: string;
-
-  @Column({ type: "uuid", nullable: true })
-  branch_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
   code: string;
@@ -40,6 +39,15 @@ class Inventory {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(
+    () => BranchInventory,
+    (branch_inventory) => branch_inventory.inventory,
+    {
+      createForeignKeyConstraints: false,
+    }
+  )
+  branch_inventories: BranchInventory[];
 }
 
 export default Inventory;

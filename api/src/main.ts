@@ -9,8 +9,9 @@ import { connectDB } from "./config/database/db.config";
 import authRoutes from "./modules/auth/auth.route";
 import userRoutes from "./modules/user/user.route";
 import unitRoutes from "./modules/unit/unit.route";
-import CategoryItemRoutes from "./modules/category-item/category-item.route";
-import ItemRoutes from "./modules/item/item.route";
+import categoryItemRoutes from "./modules/category-item/category-item.route";
+import itemRoutes from "./modules/item/item.route";
+import inventoryRoutes from "./modules/inventory/inventory.route";
 
 dotenv.config();
 
@@ -27,8 +28,9 @@ app.use(globalLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/units", unitRoutes);
-app.use("/api/category-items", CategoryItemRoutes);
-app.use("/api/items", ItemRoutes);
+app.use("/api/category-items", categoryItemRoutes);
+app.use("/api/items", itemRoutes);
+app.use("/api/inventories", inventoryRoutes);
 
 app.use(errorHandler);
 
