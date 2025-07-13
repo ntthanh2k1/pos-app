@@ -49,8 +49,6 @@ class BranchInventory {
   updated_at: Date;
 
   @ManyToOne(() => Branch, (branch) => branch.branch_inventories, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
     nullable: true,
     createForeignKeyConstraints: false,
   })

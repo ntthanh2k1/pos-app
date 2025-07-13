@@ -40,10 +40,20 @@ const baseRepository = <T>(
         );
       }
 
+      // if (filters) {
+      //   Object.entries(filters).forEach(([key, value]) => {
+      //     if (value !== undefined) {
+      //       queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+      //     }
+      //   });
+      // }
       if (filters) {
         Object.entries(filters).forEach(([key, value]) => {
           if (value !== undefined) {
-            queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
+            const colStr = key.includes(".") ? key : `entity.${key}`;
+            queryBuilder.andWhere(`${colStr} = :${key.replace(/\./g, "_")}`, {
+              [key.replace(/\./g, "_")]: value,
+            });
           }
         });
       }
