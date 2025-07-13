@@ -12,15 +12,15 @@ import itemRoutes from "./item/item.route";
 
 const router = express.Router();
 
-router.use("/api/auth", authRoutes);
+router.use("/auth", authRoutes);
 
-router.use("/api/users", userRoutes);
+router.use("/users", userRoutes);
 
-router.use("/api/branches", branchRoutes);
-router.use("/api/inventories", inventoryRoutes);
+router.use("/branches", branchRoutes);
+router.use("/inventories", inventoryRoutes);
 
-router.use("/api/units", unitRoutes);
-router.use("/api/category-items", categoryItemRoutes);
-router.use("/api/items", itemRoutes);
+router.use("/units", unitRoutes);
+router.use("/category-items", categoryItemRoutes);
+router.use("/items", itemRoutes);
 
 export default router;
