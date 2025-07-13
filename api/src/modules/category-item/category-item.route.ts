@@ -6,8 +6,8 @@ import {
   createCategoryItem,
   getCategoryItems,
   getCategoryItem,
-  softDeleteCategoryItem,
   updateCategoryItem,
+  deleteCategoryItem,
 } from "./category-item.controller";
 import getCategoryItemsDto from "./dto/get-category-items.dto";
 import updateCategoryItemDto from "./dto/update-category-item.dto";
@@ -20,6 +20,6 @@ router.post("/", validateDto(createCategoryItemDto), createCategoryItem);
 router.get("/", validateDto(getCategoryItemsDto, "query"), getCategoryItems);
 router.get("/:id", getCategoryItem);
 router.patch("/:id", validateDto(updateCategoryItemDto), updateCategoryItem);
-router.patch("/soft-delete/:id", softDeleteCategoryItem);
+router.delete("/:id", deleteCategoryItem);
 
 export default router;

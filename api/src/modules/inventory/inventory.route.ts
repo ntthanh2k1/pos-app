@@ -4,9 +4,9 @@ import validateDto from "../../middleware/validate-dto.middleware";
 import CreateInventoryDto from "./dto/create-inventory.dto";
 import {
   createInventory,
+  deleteInventory,
   getInventories,
   getInventory,
-  softDeleteInventory,
   updateInventory,
 } from "./inventory.controller";
 import GetInventoriesDto from "./dto/get-inventories.dto";
@@ -20,6 +20,6 @@ router.post("/", validateDto(CreateInventoryDto), createInventory);
 router.get("/", validateDto(GetInventoriesDto, "query"), getInventories);
 router.get("/:id", getInventory);
 router.patch("/:id", validateDto(UpdateInventoryDto), updateInventory);
-router.patch("/soft-delete/:id", softDeleteInventory);
+router.delete("/:id", deleteInventory);
 
 export default router;

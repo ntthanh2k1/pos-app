@@ -12,26 +12,26 @@ const createUser: Handler = async (
   }
 };
 
-const getAllUsers: Handler = async (
+const getUsers: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = getAllUsers.name;
+    error.methodName = getUsers.name;
     next(error);
   }
 };
 
-const getUserById: Handler = async (
+const getUser: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = getUserById.name;
+    error.methodName = getUser.name;
     next(error);
   }
 };
@@ -60,23 +60,4 @@ const deleteUser: Handler = async (
   }
 };
 
-const softDeleteUser: Handler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
-  try {
-  } catch (error) {
-    error.methodName = softDeleteUser.name;
-    next(error);
-  }
-};
-
-export {
-  createUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-  softDeleteUser,
-};
+export { createUser, getUsers, getUser, updateUser, deleteUser };

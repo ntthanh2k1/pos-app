@@ -3,7 +3,7 @@ import CreateUnitDto from "./create-unit.dto";
 
 class UpdateUnitDto extends CreateUnitDto {
   @IsOptional()
-  is_active: boolean;
+  isActive: boolean;
 }
 
 export default UpdateUnitDto;

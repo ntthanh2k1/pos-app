@@ -14,10 +14,10 @@ class GetInventoriesDto {
   searchColumns: string[];
 
   @IsOptional()
-  branch_id: string;
+  branchId: string;
 
   @IsOptional()
-  is_active: boolean;
+  isActive: boolean;
 
   @IsOptional()
   orderBy: string;

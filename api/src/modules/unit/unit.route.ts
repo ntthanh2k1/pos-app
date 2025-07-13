@@ -6,8 +6,8 @@ import {
   createUnit,
   getUnits,
   getUnit,
-  softDeleteUnit,
   updateUnit,
+  deleteUnit,
 } from "./unit.controller";
 import GetUnitsDto from "./dto/get-units.dto";
 import UpdateUnitDto from "./dto/update-unit.dto";
@@ -20,6 +20,6 @@ router.post("/", validateDto(CreateUnitDto), createUnit);
 router.get("/", validateDto(GetUnitsDto, "query"), getUnits);
 router.get("/:id", getUnit);
 router.patch("/:id", validateDto(UpdateUnitDto), updateUnit);
-router.patch("/soft-delete/:id", softDeleteUnit);
+router.delete("/:id", deleteUnit);
 
 export default router;

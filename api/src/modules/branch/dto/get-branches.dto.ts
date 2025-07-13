@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional } from "class-validator";
 
-class GetItemsDto {
+class GetBranchesDto {
   @IsOptional()
   page: number;
 
@@ -14,12 +14,6 @@ class GetItemsDto {
   searchColumns: string[];
 
   @IsOptional()
-  categoryItemId: string;
-
-  @IsOptional()
-  unitId: string;
-
-  @IsOptional()
   isActive: boolean;
 
   @IsOptional()
@@ -30,4 +24,4 @@ class GetItemsDto {
   orderDir: "ASC" | "DESC";
 }
 
-export default GetItemsDto;
+export default GetBranchesDto;

@@ -14,10 +14,10 @@ class getCategoryItemsDto {
   searchColumns: string[];
 
   @IsOptional()
-  parent_id: string;
+  parentId: string;
 
   @IsOptional()
-  is_active: boolean;
+  isActive: boolean;
 
   @IsOptional()
   orderBy: string;

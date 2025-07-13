@@ -3,7 +3,7 @@ import createCategoryItemDto from "./create-category-item.dto";
 
 class updateCategoryItemDto extends createCategoryItemDto {
   @IsOptional()
-  is_active: boolean;
+  isActive: boolean;
 }
 
 export default updateCategoryItemDto;

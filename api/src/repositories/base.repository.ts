@@ -5,21 +5,8 @@ import PaginateData from "../shared/interfaces/paginate-data.interface";
 
 const baseRepository = <T>(
   repository: Repository<T>,
-  primaryKey: keyof T,
-  softDeleteKey: keyof T = "is_deleted" as keyof T
+  primaryKey: keyof T
 ): IBaseRepository<T> => {
-  const updateEntity = async (id: number | string, data: Partial<T>) => {
-    const existing = await repository.findOne({
-      where: { [primaryKey]: id, [softDeleteKey]: false } as any,
-    } as any);
-
-    if (!existing) {
-      return null;
-    }
-
-    return await repository.save({ ...existing, ...data } as any);
-  };
-
   return {
     create: async (data: Partial<T>): Promise<T> => {
       return await repository.save(data as any);
@@ -54,17 +41,11 @@ const baseRepository = <T>(
       }
 
       if (filters) {
-        if (filters[softDeleteKey] === undefined) {
-          (filters[softDeleteKey] as boolean) = false;
-        }
-
         Object.entries(filters).forEach(([key, value]) => {
           if (value !== undefined) {
             queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
           }
         });
-      } else {
-        queryBuilder.andWhere(`entity.${softDeleteKey as string} = false`);
       }
 
       if (orderBy && orderDir) {
@@ -104,10 +85,6 @@ const baseRepository = <T>(
 
       const where = { ...condition } as any;
 
-      if (where[softDeleteKey] === undefined) {
-        where[softDeleteKey] = false;
-      }
-
       Object.entries(where).forEach(([key, value]) => {
         queryBuilder.andWhere(`entity.${key} = :${key}`, { [key]: value });
       });
@@ -119,17 +96,15 @@ const baseRepository = <T>(
       id: number | string,
       data: Partial<T>
     ): Promise<T | null> => {
-      return await updateEntity(id, data);
-    },
-
-    softDelete: async (
-      id: number | string,
-      updatedBy: string
-    ): Promise<T | null> => {
-      return await updateEntity(id, {
-        [softDeleteKey]: true,
-        updated_by: updatedBy,
+      const existing = await repository.findOne({
+        where: { [primaryKey]: id } as any,
       } as any);
+
+      if (!existing) {
+        return null;
+      }
+
+      return await repository.save({ ...existing, ...data } as any);
     },
 
     delete: async (id: number | string): Promise<void> => {

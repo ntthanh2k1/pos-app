@@ -2,10 +2,10 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 
 class CreateItemDto {
   @IsOptional()
-  category_item_id: string;
+  categoryItemId: string;
 
   @IsOptional()
-  unit_id: string;
+  unitId: string;
 
   @IsNotEmpty()
   name: string;

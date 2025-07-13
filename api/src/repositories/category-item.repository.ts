@@ -5,8 +5,7 @@ import baseRepository from "./base.repository";
 
 const base = baseRepository<CategoryItem>(
   dbConfig.getRepository(CategoryItem),
-  "category_item_id",
-  "is_deleted"
+  "category_item_id"
 );
 const categoryItemRepository = {
   ...base,

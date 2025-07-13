@@ -40,19 +40,19 @@ const getCategoryItems: Handler = async (
       limit,
       search,
       searchColumns,
-      parent_id,
-      is_active,
+      parentId,
+      isActive,
       orderBy,
       orderDir,
     } = req.query;
     const filters: Record<string, any> = {};
 
-    if (parent_id) {
-      filters.parent_id = parent_id;
+    if (parentId) {
+      filters.parent_id = parentId;
     }
 
-    if (typeof is_active === "boolean") {
-      filters.is_active = is_active;
+    if (typeof isActive === "boolean") {
+      filters.is_active = isActive;
     }
 
     const filterData: any = {
@@ -109,12 +109,12 @@ const updateCategoryItem: Handler = async (
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const { parent_id, name, note, is_active } = req.body;
+    const { parentId, name, note, isActive } = req.body;
     const currentCategoryItem = await categoryItemRepository.update(id, {
-      parent_id,
+      parent_id: parentId,
       name,
       note,
-      is_active,
+      is_active: isActive,
       updated_by: req["user"].username,
     });
 
@@ -135,31 +135,22 @@ const updateCategoryItem: Handler = async (
   }
 };
 
-const softDeleteCategoryItem: Handler = async (
+const deleteCategoryItem: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const currentCategoryItem = await categoryItemRepository.softDelete(
-      id,
-      req["user"].username
-    );
 
-    if (!currentCategoryItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Category item not found." });
-    }
+    await categoryItemRepository.delete(id);
 
     res.status(200).json({
       success: true,
       message: "Delete category item successfully.",
-      data: currentCategoryItem,
     });
   } catch (error) {
-    error.methodName = softDeleteCategoryItem.name;
+    error.methodName = deleteCategoryItem.name;
     next(error);
   }
 };
@@ -169,5 +160,5 @@ export {
   getCategoryItems,
   getCategoryItem,
   updateCategoryItem,
-  softDeleteCategoryItem,
+  deleteCategoryItem,
 };

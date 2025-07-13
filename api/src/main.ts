@@ -7,11 +7,15 @@ import errorHandler from "./middleware/error.middleware";
 import globalLimiter from "./middleware/rate-limit.middleware";
 import { connectDB } from "./config/database/db.config";
 import authRoutes from "./modules/auth/auth.route";
+
 import userRoutes from "./modules/user/user.route";
+
+import branchRoutes from "./modules/branch/branch.route";
+import inventoryRoutes from "./modules/inventory/inventory.route";
+
 import unitRoutes from "./modules/unit/unit.route";
 import categoryItemRoutes from "./modules/category-item/category-item.route";
 import itemRoutes from "./modules/item/item.route";
-import inventoryRoutes from "./modules/inventory/inventory.route";
 
 dotenv.config();
 
@@ -24,13 +28,16 @@ app.use(cors());
 app.use(cookieParser());
 app.use(globalLimiter);
 
-// routes
 app.use("/api/auth", authRoutes);
+
 app.use("/api/users", userRoutes);
+
+app.use("/api/branches", branchRoutes);
+app.use("/api/inventories", inventoryRoutes);
+
 app.use("/api/units", unitRoutes);
 app.use("/api/category-items", categoryItemRoutes);
 app.use("/api/items", itemRoutes);
-app.use("/api/inventories", inventoryRoutes);
 
 app.use(errorHandler);
 

@@ -4,9 +4,9 @@ import validateDto from "../../middleware/validate-dto.middleware";
 import CreateItemDto from "./dto/create-item.dto";
 import {
   createItem,
+  deleteItem,
   getItem,
   getItems,
-  softDeleteItem,
   updateItem,
 } from "./item.controller";
 import GetItemsDto from "./dto/get-items.dto";
@@ -20,6 +20,6 @@ router.post("/", validateDto(CreateItemDto), createItem);
 router.get("/", validateDto(GetItemsDto, "query"), getItems);
 router.get("/:id", getItem);
 router.patch("/:id", validateDto(UpdateItemDto), updateItem);
-router.patch("/soft-delete/:id", softDeleteItem);
+router.delete("/:id", deleteItem);
 
 export default router;

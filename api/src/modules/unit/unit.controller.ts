@@ -35,12 +35,12 @@ const getUnits: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { page, limit, search, searchColumns, is_active, orderBy, orderDir } =
+    const { page, limit, search, searchColumns, isActive, orderBy, orderDir } =
       req.query;
     const filters: Record<string, any> = {};
 
-    if (typeof is_active === "boolean") {
-      filters.is_active = is_active;
+    if (typeof isActive === "boolean") {
+      filters.is_active = isActive;
     }
 
     const filterData: any = {
@@ -94,12 +94,12 @@ const updateUnit: Handler = async (
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const { name, symbol, note, is_active } = req.body;
+    const { name, symbol, note, isActive } = req.body;
     const currentUnit = await unitRepository.update(id, {
       name,
       symbol,
       note,
-      is_active,
+      is_active: isActive,
       updated_by: req["user"].username,
     });
 
@@ -120,33 +120,24 @@ const updateUnit: Handler = async (
   }
 };
 
-const softDeleteUnit: Handler = async (
+const deleteUnit: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const currentUnit = await unitRepository.softDelete(
-      id,
-      req["user"].username
-    );
 
-    if (!currentUnit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found." });
-    }
+    await unitRepository.delete(id);
 
     res.status(200).json({
       success: true,
       message: "Delete unit successfully.",
-      data: currentUnit,
     });
   } catch (error) {
-    error.methodName = softDeleteUnit.name;
+    error.methodName = deleteUnit.name;
     next(error);
   }
 };
 
-export { createUnit, getUnits, getUnit, updateUnit, softDeleteUnit };
+export { createUnit, getUnits, getUnit, updateUnit, deleteUnit };

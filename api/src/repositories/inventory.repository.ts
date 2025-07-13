@@ -4,8 +4,7 @@ import baseRepository from "./base.repository";
 
 const base = baseRepository<Inventory>(
   dbConfig.getRepository(Inventory),
-  "inventory_id",
-  "is_deleted"
+  "inventory_id"
 );
 const inventoryRepository = {
   ...base,

@@ -14,7 +14,7 @@ class GetUnitsDto {
   searchColumns: string[];
 
   @IsOptional()
-  is_active: boolean;
+  isActive: boolean;
 
   @IsOptional()
   orderBy: string;

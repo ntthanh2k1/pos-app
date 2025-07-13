@@ -1,8 +1,6 @@
 import { Handler, NextFunction, Request, Response } from "express";
 import itemRepository from "../../repositories/item.repository";
 import createCode from "../../shared/utils/create-code";
-import categoryItemRepository from "../../repositories/category-item.repository";
-import unitRepository from "../../repositories/unit.repository";
 
 const createItem: Handler = async (
   req: Request,
@@ -10,11 +8,11 @@ const createItem: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { category_item_id, unit_id, name, image, cost, note } = req.body;
+    const { categoryItemId, unitId, name, image, cost, note } = req.body;
     const code = createCode("IM");
     const newItem = await itemRepository.create({
-      category_item_id,
-      unit_id,
+      category_item_id: categoryItemId,
+      unit_id: unitId,
       code,
       name,
       image,
@@ -45,24 +43,24 @@ const getItems: Handler = async (
       limit,
       search,
       searchColumns,
-      category_item_id,
-      unit_id,
-      is_active,
+      categoryItemId,
+      unitId,
+      isActive,
       orderBy,
       orderDir,
     } = req.query;
     const filters: Record<string, any> = {};
 
-    if (category_item_id) {
-      filters.category_item_id = category_item_id;
+    if (categoryItemId) {
+      filters.category_item_id = categoryItemId;
     }
 
-    if (unit_id) {
-      filters.unit_id = unit_id;
+    if (unitId) {
+      filters.unit_id = unitId;
     }
 
-    if (typeof is_active === "boolean") {
-      filters.is_active = is_active;
+    if (typeof isActive === "boolean") {
+      filters.is_active = isActive;
     }
 
     const filterData: any = {
@@ -117,16 +115,16 @@ const updateItem: Handler = async (
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const { category_item_id, unit_id, name, image, cost, note, is_active } =
+    const { categoryItemId, unitId, name, image, cost, note, isActive } =
       req.body;
     const currentItem = await itemRepository.update(id, {
-      category_item_id,
-      unit_id,
+      category_item_id: categoryItemId,
+      unit_id: unitId,
       name,
       image,
       cost,
       note,
-      is_active,
+      is_active: isActive,
       updated_by: req["user"].username,
     });
 
@@ -147,33 +145,24 @@ const updateItem: Handler = async (
   }
 };
 
-const softDeleteItem: Handler = async (
+const deleteItem: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
     const { id } = req.params;
-    const currentItem = await itemRepository.softDelete(
-      id,
-      req["user"].username
-    );
 
-    if (!currentItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Item not found." });
-    }
+    await itemRepository.delete(id);
 
     res.status(200).json({
       success: true,
       message: "Delete item successfully.",
-      data: currentItem,
     });
   } catch (error) {
-    error.methodName = softDeleteItem.name;
+    error.methodName = deleteItem.name;
     next(error);
   }
 };
 
-export { createItem, getItems, getItem, updateItem, softDeleteItem };
+export { createItem, getItems, getItem, updateItem, deleteItem };

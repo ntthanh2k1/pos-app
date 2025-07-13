@@ -10,7 +10,7 @@ const createInventory: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { branch_id, name, note } = req.body;
+    const { branchId, name, note } = req.body;
     const code = createCode("IY");
     const newInventory = await inventoryRepository.create({
       code,
@@ -18,10 +18,12 @@ const createInventory: Handler = async (
       note,
       created_by: req["user"].username,
     });
-    const currentBranch = await branchRepository.getOneBy({ branch_id });
+    const currentBranch = await branchRepository.getOneBy({
+      branch_id: branchId,
+    });
 
     await branchInventoryRepository.create({
-      branch_id,
+      branch_id: branchId,
       inventory_id: newInventory.inventory_id,
       branch_code: currentBranch.code,
       branch_name: currentBranch.name,
@@ -77,14 +79,14 @@ const updateInventory: Handler = async (
   }
 };
 
-const softDeleteInventory: Handler = async (
+const deleteInventory: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = softDeleteInventory.name;
+    error.methodName = deleteInventory.name;
     next(error);
   }
 };
@@ -94,5 +96,5 @@ export {
   getInventories,
   getInventory,
   updateInventory,
-  softDeleteInventory,
+  deleteInventory,
 };

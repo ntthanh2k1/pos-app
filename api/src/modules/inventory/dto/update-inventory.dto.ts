@@ -3,7 +3,7 @@ import CreateInventoryDto from "./create-inventory.dto";
 
 class UpdateInventoryDto extends CreateInventoryDto {
   @IsOptional()
-  is_active: boolean;
+  isActive: boolean;
 }
 
 export default UpdateInventoryDto;

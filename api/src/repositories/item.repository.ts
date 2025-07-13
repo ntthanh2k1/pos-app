@@ -3,11 +3,7 @@ import Item from "../entities/item.entity";
 import FilterData from "../shared/interfaces/filter-data.interface";
 import baseRepository from "./base.repository";
 
-const base = baseRepository<Item>(
-  dbConfig.getRepository(Item),
-  "item_id",
-  "is_deleted"
-);
+const base = baseRepository<Item>(dbConfig.getRepository(Item), "item_id");
 const itemRepository = {
   ...base,
 
