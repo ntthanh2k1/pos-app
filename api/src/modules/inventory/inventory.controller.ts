@@ -2,7 +2,6 @@ import { Handler, NextFunction, Request, Response } from "express";
 import createCode from "../../shared/utils/create-code";
 import inventoryRepository from "../../repositories/inventory.repository";
 import branchInventoryRepository from "../../repositories/branch-inventory.repository";
-import branchRepository from "../../repositories/branch.repository";
 
 const createInventory: Handler = async (
   req: Request,
@@ -18,17 +17,10 @@ const createInventory: Handler = async (
       note,
       created_by: req["user"].username,
     });
-    const currentBranch = await branchRepository.getOneBy({
-      branch_id: branchId,
-    });
 
     await branchInventoryRepository.create({
       branch_id: branchId,
       inventory_id: newInventory.inventory_id,
-      branch_code: currentBranch.code,
-      branch_name: currentBranch.name,
-      inventory_code: newInventory.code,
-      inventory_name: newInventory.name,
       created_by: req["user"].username,
     });
 

@@ -29,12 +29,14 @@ const inventoryRepository = {
       (qb) =>
         qb
           .leftJoin("entity.branch_inventories", "branch_inventories")
+          .leftJoin("branch_inventories.branch", "branch")
           .addSelect([
             "branch_inventories.branch_inventory_id",
             "branch_inventories.branch_id",
-            "branch_inventories.branch_code",
-            "branch_inventories.branch_name",
             "branch_inventories.is_main_inventory",
+
+            "branch.code",
+            "branch.name",
           ])
     );
   },

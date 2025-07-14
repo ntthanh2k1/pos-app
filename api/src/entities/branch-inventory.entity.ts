@@ -5,12 +5,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from "typeorm";
 import Branch from "./branch.entity";
 import Inventory from "./inventory.entity";
 
 @Entity("branch_inventory")
+@Unique(["branch_id", "inventory_id"])
 class BranchInventory {
   @PrimaryGeneratedColumn("uuid")
   branch_inventory_id: string;
@@ -20,18 +22,6 @@ class BranchInventory {
 
   @Column({ type: "uuid", nullable: true })
   inventory_id: string;
-
-  @Column({ type: "varchar", length: 32, nullable: true })
-  branch_code: string;
-
-  @Column({ type: "varchar", length: 128, nullable: true })
-  branch_name: string;
-
-  @Column({ type: "varchar", length: 32, nullable: true })
-  inventory_code: string;
-
-  @Column({ type: "varchar", length: 128, nullable: true })
-  inventory_name: string;
 
   @Column({ default: false })
   is_main_inventory: boolean;

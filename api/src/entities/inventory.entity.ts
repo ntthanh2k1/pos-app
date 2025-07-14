@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import BranchInventory from "./branch-inventory.entity";
+import InventoryItem from "./inventory-item.entity";
 
 @Entity("inventory")
 class Inventory {
@@ -45,6 +46,15 @@ class Inventory {
     }
   )
   branch_inventories: BranchInventory[];
+
+  @OneToMany(
+    () => InventoryItem,
+    (inventory_item) => inventory_item.inventory,
+    {
+      createForeignKeyConstraints: false,
+    }
+  )
+  inventory_items: InventoryItem[];
 }
 
 export default Inventory;

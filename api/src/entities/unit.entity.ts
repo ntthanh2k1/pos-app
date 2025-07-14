@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import Item from "./item.entity";
+import InventoryItem from "./inventory-item.entity";
 
 @Entity("unit")
 class Unit {
@@ -45,6 +46,11 @@ class Unit {
     createForeignKeyConstraints: false,
   })
   items: Item[];
+
+  @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.unit, {
+    createForeignKeyConstraints: false,
+  })
+  inventory_items: InventoryItem[];
 }
 
 export default Unit;

@@ -2,26 +2,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import CategoryItem from "./category-item.entity";
-import Unit from "./unit.entity";
 import InventoryItem from "./inventory-item.entity";
 
-@Entity("item")
-class Item {
+@Entity("supplier")
+class Supplier {
   @PrimaryGeneratedColumn("uuid")
-  item_id: string;
-
-  @Column({ type: "uuid", nullable: true })
-  category_item_id: string;
-
-  @Column({ type: "uuid", nullable: true })
-  unit_id: string;
+  supplier_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
   code: string;
@@ -29,8 +19,17 @@ class Item {
   @Column({ type: "varchar", length: 128, nullable: true })
   name: string;
 
+  @Column({ type: "varchar", length: 32, nullable: true })
+  phone: string;
+
+  @Column({ type: "varchar", length: 128, nullable: true })
+  email: string;
+
+  @Column({ type: "varchar", length: 32, nullable: true })
+  tax_number: string;
+
   @Column({ type: "varchar", length: 256, nullable: true })
-  image: string;
+  address: string;
 
   @Column({ type: "varchar", length: 256, nullable: true })
   note: string;
@@ -50,25 +49,10 @@ class Item {
   @UpdateDateColumn()
   updated_at: Date;
 
-  // relation many item_ids to 1 category_item_id
-  @ManyToOne(() => CategoryItem, (category_item) => category_item.items, {
-    nullable: true,
-    createForeignKeyConstraints: false,
-  })
-  @JoinColumn({ name: "category_item_id" })
-  category_item: CategoryItem;
-
-  @ManyToOne(() => Unit, (unit) => unit.items, {
-    nullable: true,
-    createForeignKeyConstraints: false,
-  })
-  @JoinColumn({ name: "unit_id" })
-  unit: Unit;
-
-  @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.item, {
+  @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.supplier, {
     createForeignKeyConstraints: false,
   })
   inventory_items: InventoryItem[];
 }
 
-export default Item;
+export default Supplier;
