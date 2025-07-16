@@ -3,11 +3,11 @@ import { useColorMode } from "../ui/color-mode";
 import { LuMoon, LuSun } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { useLayoutStore } from "@/store/layout-store";
+import { useSidebarStore } from "@/store/sidebar-store";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
+  const toggleSidebar = useSidebarStore((state) => state.setSidebarOpen);
 
   const username = "thanhnt";
 
@@ -18,7 +18,7 @@ const Header = () => {
           aria-label="Toggle sidebar"
           variant="ghost"
           border="solid"
-          onClick={toggleSidebar}
+          onClick={() => toggleSidebar()}
         >
           <RxHamburgerMenu />
         </IconButton>

@@ -1,16 +1,20 @@
 import { create } from "zustand";
 
-interface LayoutState {
+interface SidebarState {
   isSidebarOpen: boolean;
   isSidebarHovered: boolean;
-  toggleSidebar: () => void;
+  setSidebarOpen: () => void;
   setSidebarHovered: (hovered: boolean) => void;
 }
 
-export const useLayoutStore = create<LayoutState>((set) => ({
+export const useSidebarStore = create<SidebarState>((set) => ({
   isSidebarOpen: true,
+
   isSidebarHovered: false,
-  toggleSidebar: () =>
+
+  setSidebarOpen: () =>
     set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-  setSidebarHovered: (hovered) => set({ isSidebarHovered: hovered }),
+
+  setSidebarHovered: (hovered: boolean) =>
+    set((state) => ({ ...state, isSidebarHovered: hovered })),
 }));

@@ -1,9 +1,10 @@
-import { useLayoutStore } from "@/store/layout-store";
+import { useSidebarStore } from "@/store/sidebar-store";
 import { Flex, Text } from "@chakra-ui/react";
 
 const Sidebar = () => {
-  const { isSidebarOpen, isSidebarHovered, setSidebarHovered } =
-    useLayoutStore();
+  const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
+  const isSidebarHovered = useSidebarStore((state) => state.isSidebarHovered);
+  const setSidebarHovered = useSidebarStore((state) => state.setSidebarHovered);
   const sidebarWidth = isSidebarOpen || isSidebarHovered ? "56" : "20";
 
   return (
