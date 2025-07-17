@@ -2,17 +2,23 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import BranchInventory from "./branch-inventory.entity";
 import InventoryItem from "./inventory-item.entity";
+import Business from "./business.entity";
 
 @Entity("inventory")
 class Inventory {
   @PrimaryGeneratedColumn("uuid")
   inventory_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  business_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
   code: string;
@@ -37,6 +43,13 @@ class Inventory {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => Business, (business) => business.inventories, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "business_id" })
+  business: Business;
 
   @OneToMany(
     () => BranchInventory,

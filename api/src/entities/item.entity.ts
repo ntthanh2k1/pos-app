@@ -11,6 +11,7 @@ import {
 import CategoryItem from "./category-item.entity";
 import Unit from "./unit.entity";
 import InventoryItem from "./inventory-item.entity";
+import Branch from "./branch.entity";
 
 @Entity("item")
 class Item {
@@ -22,6 +23,9 @@ class Item {
 
   @Column({ type: "uuid", nullable: true })
   unit_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  branch_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
   code: string;
@@ -64,6 +68,13 @@ class Item {
   })
   @JoinColumn({ name: "unit_id" })
   unit: Unit;
+
+  @ManyToOne(() => Branch, (branch) => branch.items, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "branch_id" })
+  branch: Branch;
 
   @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.item, {
     createForeignKeyConstraints: false,

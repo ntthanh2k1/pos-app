@@ -1,6 +1,8 @@
 import { Handler, NextFunction, Request, Response } from "express";
 import createCode from "../../shared/utils/create-code";
 import branchRepository from "../../repositories/branch.repository";
+import inventoryRepository from "../../repositories/inventory.repository";
+import branchInventoryRepository from "../../repositories/branch-inventory.repository";
 
 const createBranch: Handler = async (
   req: Request,
@@ -9,6 +11,8 @@ const createBranch: Handler = async (
 ): Promise<any> => {
   try {
     const { name, phone, email, taxNumber, address, note } = req.body;
+
+    // create branch
     const code = createCode("BH");
     const newBranch = await branchRepository.create({
       code,
@@ -18,6 +22,22 @@ const createBranch: Handler = async (
       tax_number: taxNumber,
       address,
       note,
+      created_by: req["user"].username,
+    });
+
+    // create inventory
+    const inventoryCode = createCode("IY");
+    const newInventory = await inventoryRepository.create({
+      code: inventoryCode,
+      name: `Main Inventory Of ${name} Branch`,
+      created_by: req["user"].username,
+    });
+
+    // create branch_inventory
+    await branchInventoryRepository.create({
+      branch_id: newBranch.branch_id,
+      inventory_id: newInventory.inventory_id,
+      is_main_inventory: true,
       created_by: req["user"].username,
     });
 
@@ -115,13 +135,11 @@ const updateBranch: Handler = async (
         .json({ success: false, message: "Branch not found." });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Update branch successfully.",
-        data: currentBranch,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Update branch successfully.",
+      data: currentBranch,
+    });
   } catch (error) {
     error.methodName = updateBranch.name;
     next(error);

@@ -2,21 +2,18 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import InventoryItem from "./inventory-item.entity";
-import Business from "./business.entity";
+import Branch from "./branch.entity";
+import Inventory from "./inventory.entity";
+import Supplier from "./supplier.entity";
+import User from "./user.entity";
 
-@Entity("supplier")
-class Supplier {
+@Entity("business")
+class Business {
   @PrimaryGeneratedColumn("uuid")
-  supplier_id: string;
-
-  @Column({ type: "uuid", nullable: true })
   business_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
@@ -24,6 +21,9 @@ class Supplier {
 
   @Column({ type: "varchar", length: 128, nullable: true })
   name: string;
+
+  @Column({ type: "varchar", length: 256, nullable: true })
+  image: string;
 
   @Column({ type: "varchar", length: 32, nullable: true })
   phone: string;
@@ -55,17 +55,25 @@ class Supplier {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Business, (business) => business.suppliers, {
-    nullable: true,
+  @OneToMany(() => Branch, (branch) => branch.business, {
     createForeignKeyConstraints: false,
   })
-  @JoinColumn({ name: "business_id" })
-  business: Business;
+  branches: Branch[];
 
-  @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.supplier, {
+  @OneToMany(() => Inventory, (inventory) => inventory.business, {
     createForeignKeyConstraints: false,
   })
-  inventory_items: InventoryItem[];
+  inventories: Inventory[];
+
+  @OneToMany(() => Supplier, (supplier) => supplier.business, {
+    createForeignKeyConstraints: false,
+  })
+  suppliers: Supplier[];
+
+  @OneToMany(() => User, (user) => user.business, {
+    createForeignKeyConstraints: false,
+  })
+  users: User[];
 }
 
-export default Supplier;
+export default Business;

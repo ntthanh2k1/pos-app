@@ -14,6 +14,9 @@ class Unit {
   @PrimaryGeneratedColumn("uuid")
   unit_id: string;
 
+  @Column({ type: "uuid", nullable: true })
+  branch_id: string;
+
   @Column({ type: "varchar", length: 32, nullable: true })
   code: string;
 

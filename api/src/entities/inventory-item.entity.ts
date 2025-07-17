@@ -12,6 +12,7 @@ import Inventory from "./inventory.entity";
 import Item from "./item.entity";
 import Supplier from "./supplier.entity";
 import Unit from "./unit.entity";
+import Branch from "./branch.entity";
 
 @Entity("inventory_item")
 @Unique(["inventory_id", "item_id"])
@@ -30,6 +31,9 @@ class InventoryItem {
 
   @Column({ type: "uuid", nullable: true })
   unit_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  branch_id: string;
 
   @Column({ type: "int", default: 0 })
   cost: number;
@@ -76,6 +80,13 @@ class InventoryItem {
   })
   @JoinColumn({ name: "unit_id" })
   unit: Unit;
+
+  @ManyToOne(() => Branch, (branch) => branch.inventory_items, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "branch_id" })
+  branch: Branch;
 }
 
 export default InventoryItem;

@@ -7,7 +7,7 @@ import { useSidebarStore } from "@/store/sidebar-store";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const toggleSidebar = useSidebarStore((state) => state.setSidebarOpen);
+  const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
   const username = "thanhnt";
 
@@ -18,7 +18,7 @@ const Header = () => {
           aria-label="Toggle sidebar"
           variant="ghost"
           border="solid"
-          onClick={() => toggleSidebar()}
+          onClick={setSidebarOpen}
         >
           <RxHamburgerMenu />
         </IconButton>

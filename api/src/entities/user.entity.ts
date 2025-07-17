@@ -2,14 +2,20 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import Business from "./business.entity";
 
 @Entity("user")
 class User {
   @PrimaryGeneratedColumn("uuid")
   user_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  business_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
   code: string;
@@ -64,6 +70,13 @@ class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => Business, (business) => business.users, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "business_id" })
+  business: Business;
 }
 
 export default User;
