@@ -13,6 +13,7 @@ import Item from "./item.entity";
 import Supplier from "./supplier.entity";
 import Unit from "./unit.entity";
 import Branch from "./branch.entity";
+import Business from "./business.entity";
 
 @Entity("inventory_item")
 @Unique(["inventory_id", "item_id"])
@@ -25,6 +26,9 @@ class InventoryItem {
 
   @Column({ type: "uuid", nullable: true })
   item_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  business_id: string;
 
   @Column({ type: "uuid", nullable: true })
   supplier_id: string;
@@ -60,6 +64,13 @@ class InventoryItem {
   })
   @JoinColumn({ name: "item_id" })
   item: Item;
+
+  @ManyToOne(() => Business, (business) => business.inventory_items, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "business_id" })
+  business: Business;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.inventory_items, {
     nullable: true,

@@ -12,11 +12,15 @@ import CategoryItem from "./category-item.entity";
 import Unit from "./unit.entity";
 import InventoryItem from "./inventory-item.entity";
 import Branch from "./branch.entity";
+import Business from "./business.entity";
 
 @Entity("item")
 class Item {
   @PrimaryGeneratedColumn("uuid")
   item_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  business_id: string;
 
   @Column({ type: "uuid", nullable: true })
   category_item_id: string;
@@ -57,7 +61,13 @@ class Item {
   @UpdateDateColumn()
   updated_at: Date;
 
-  // relation many item_ids to 1 category_item_id
+  @ManyToOne(() => Business, (business) => business.items, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "business_id" })
+  business: Business;
+
   @ManyToOne(() => CategoryItem, (category_item) => category_item.items, {
     nullable: true,
     createForeignKeyConstraints: false,

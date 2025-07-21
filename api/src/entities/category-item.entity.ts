@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import Item from "./item.entity";
 import Branch from "./branch.entity";
+import Business from "./business.entity";
 
 @Entity("category_item")
 class CategoryItem {
@@ -18,6 +19,9 @@ class CategoryItem {
 
   @Column({ type: "uuid", nullable: true })
   parent_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  business_id: string;
 
   @Column({ type: "uuid", nullable: true })
   branch_id: string;
@@ -54,6 +58,13 @@ class CategoryItem {
   @JoinColumn({ name: "parent_id" })
   parent: CategoryItem;
 
+  @ManyToOne(() => Business, (business) => business.category_items, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "business_id" })
+  business: Business;
+
   @ManyToOne(() => Branch, (branch) => branch.category_items, {
     nullable: true,
     createForeignKeyConstraints: false,
@@ -66,7 +77,6 @@ class CategoryItem {
   })
   category_items: CategoryItem[];
 
-  // relation 1 category_item_id has many item_ids
   @OneToMany(() => Item, (item) => item.category_item, {
     createForeignKeyConstraints: false,
   })

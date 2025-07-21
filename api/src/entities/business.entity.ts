@@ -10,6 +10,10 @@ import Branch from "./branch.entity";
 import Inventory from "./inventory.entity";
 import Supplier from "./supplier.entity";
 import User from "./user.entity";
+import CategoryItem from "./category-item.entity";
+import InventoryItem from "./inventory-item.entity";
+import Item from "./item.entity";
+import Unit from "./unit.entity";
 
 @Entity("business")
 class Business {
@@ -74,6 +78,26 @@ class Business {
     createForeignKeyConstraints: false,
   })
   users: User[];
+
+  @OneToMany(() => CategoryItem, (category_item) => category_item.business, {
+    createForeignKeyConstraints: false,
+  })
+  category_items: CategoryItem[];
+
+  @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.business, {
+    createForeignKeyConstraints: false,
+  })
+  inventory_items: InventoryItem[];
+
+  @OneToMany(() => Item, (item) => item.business, {
+    createForeignKeyConstraints: false,
+  })
+  items: Item[];
+
+  @OneToMany(() => Unit, (unit) => unit.business, {
+    createForeignKeyConstraints: false,
+  })
+  units: Unit[];
 }
 
 export default Business;

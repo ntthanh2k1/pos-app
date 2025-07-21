@@ -2,17 +2,24 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import Item from "./item.entity";
 import InventoryItem from "./inventory-item.entity";
+import Business from "./business.entity";
+import Branch from "./branch.entity";
 
 @Entity("unit")
 class Unit {
   @PrimaryGeneratedColumn("uuid")
   unit_id: string;
+
+  @Column({ type: "uuid", nullable: true })
+  business_id: string;
 
   @Column({ type: "uuid", nullable: true })
   branch_id: string;
@@ -44,7 +51,20 @@ class Unit {
   @UpdateDateColumn()
   updated_at: Date;
 
-  // relation 1 unit_id has many item_ids
+  @ManyToOne(() => Business, (business) => business.units, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "business_id" })
+  business: Business;
+
+  @ManyToOne(() => Branch, (branch) => branch.units, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "branch_id" })
+  branch: Branch;
+
   @OneToMany(() => Item, (item) => item.unit, {
     createForeignKeyConstraints: false,
   })

@@ -12,6 +12,7 @@ import Business from "./business.entity";
 import CategoryItem from "./category-item.entity";
 import Item from "./item.entity";
 import Inventory from "./inventory.entity";
+import Unit from "./unit.entity";
 
 @Entity("branch")
 class Branch {
@@ -78,6 +79,11 @@ class Branch {
     createForeignKeyConstraints: false,
   })
   items: Item[];
+
+  @OneToMany(() => Unit, (unit) => unit.branch, {
+    createForeignKeyConstraints: false,
+  })
+  units: Unit[];
 }
 
 export default Branch;
