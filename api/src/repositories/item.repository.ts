@@ -16,6 +16,7 @@ const itemRepository = {
           "category_item.category_item_id",
           "category_item.code",
           "category_item.name",
+
           "unit.unit_id",
           "unit.code",
           "unit.name",

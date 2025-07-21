@@ -8,9 +8,10 @@ const createInventory: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { branchId, name, note } = req.body;
+    const { businessId, name, note } = req.body;
     const code = createCode("IY");
     const newInventory = await inventoryRepository.create({
+      business_id: businessId,
       code,
       name,
       note,
@@ -39,12 +40,17 @@ const getInventories: Handler = async (
       limit,
       search,
       searchColumns,
+      businessId,
       branchId,
       isActive,
       orderBy,
       orderDir,
     } = req.query;
     const filters: Record<string, any> = {};
+
+    if (businessId) {
+      filters.business_id = businessId;
+    }
 
     if (branchId) {
       filters.branch_id = branchId;

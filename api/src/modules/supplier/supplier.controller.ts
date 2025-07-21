@@ -1,69 +1,69 @@
 import { Handler, NextFunction, Request, Response } from "express";
 
-const createBusiness: Handler = async (
+const createSupplier: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = createBusiness.name;
+    error.methodName = createSupplier.name;
     next(error);
   }
 };
 
-const getBusinesses: Handler = async (
+const getSuppliers: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = getBusinesses.name;
+    error.methodName = getSuppliers.name;
     next(error);
   }
 };
 
-const getBusiness: Handler = async (
+const getSupplier: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = getBusiness.name;
+    error.methodName = getSupplier.name;
     next(error);
   }
 };
 
-const updateBusiness: Handler = async (
+const updateSupplier: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = updateBusiness.name;
+    error.methodName = updateSupplier.name;
     next(error);
   }
 };
 
-const deleteBusiness: Handler = async (
+const deleteSupplier: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
   } catch (error) {
-    error.methodName = deleteBusiness.name;
+    error.methodName = deleteSupplier.name;
     next(error);
   }
 };
 
 export {
-  createBusiness,
-  getBusinesses,
-  getBusiness,
-  updateBusiness,
-  deleteBusiness,
+  createSupplier,
+  getSuppliers,
+  getSupplier,
+  updateSupplier,
+  deleteSupplier,
 };

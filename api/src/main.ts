@@ -18,9 +18,7 @@ app.use(helmet());
 app.use(cors());
 app.use(cookieParser());
 app.use(globalLimiter);
-
 app.use("/api", apiRouter);
-
 app.use(errorHandler);
 
 app.listen(port, async () => {
