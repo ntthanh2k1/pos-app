@@ -14,8 +14,13 @@ const inventoryRepository = {
     const { filters, ...rest } = filterData;
     const updateFilters: Record<string, any> = {};
 
+    if (filters?.businessId) {
+      updateFilters["business.business_id"] = filters.businessId;
+      delete filters.businessId;
+    }
+
     if (filters?.branchId) {
-      updateFilters["branch_inventories.branch_id"] = filters.branchId;
+      updateFilters["branch.branch_id"] = filters.branchId;
       delete filters.branchId;
     }
 
@@ -28,13 +33,14 @@ const inventoryRepository = {
       },
       (qb) =>
         qb
-          .leftJoin("entity.branch_inventories", "branch_inventories")
-          .leftJoin("branch_inventories.branch", "branch")
+          .leftJoin("entity.business", "business")
+          .leftJoin("entity.branch", "branch")
           .addSelect([
-            "branch_inventories.branch_inventory_id",
-            "branch_inventories.branch_id",
-            "branch_inventories.is_main_inventory",
+            "business.business_id",
+            "business.code",
+            "business.name",
 
+            "branch.branch_id",
             "branch.code",
             "branch.name",
           ])

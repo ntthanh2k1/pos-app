@@ -8,11 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import BranchInventory from "./branch-inventory.entity";
 import Business from "./business.entity";
 import CategoryItem from "./category-item.entity";
 import Item from "./item.entity";
-import InventoryItem from "./inventory-item.entity";
+import Inventory from "./inventory.entity";
 
 @Entity("branch")
 class Branch {
@@ -65,14 +64,10 @@ class Branch {
   @JoinColumn({ name: "business_id" })
   business: Business;
 
-  @OneToMany(
-    () => BranchInventory,
-    (branch_inventory) => branch_inventory.branch,
-    {
-      createForeignKeyConstraints: false,
-    }
-  )
-  branch_inventories: BranchInventory[];
+  @OneToMany(() => Inventory, (inventory) => inventory.branch, {
+    createForeignKeyConstraints: false,
+  })
+  inventories: Inventory[];
 
   @OneToMany(() => CategoryItem, (category_item) => category_item.branch, {
     createForeignKeyConstraints: false,
@@ -83,11 +78,6 @@ class Branch {
     createForeignKeyConstraints: false,
   })
   items: Item[];
-
-  @OneToMany(() => InventoryItem, (inventory_item) => inventory_item.branch, {
-    createForeignKeyConstraints: false,
-  })
-  inventory_items: InventoryItem[];
 }
 
 export default Branch;

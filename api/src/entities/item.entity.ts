@@ -36,6 +36,9 @@ class Item {
   @Column({ type: "varchar", length: 256, nullable: true })
   image: string;
 
+  @Column({ type: "int", nullable: true })
+  cost: number;
+
   @Column({ type: "varchar", length: 256, nullable: true })
   note: string;
 

@@ -32,12 +32,6 @@ class InventoryItem {
   @Column({ type: "uuid", nullable: true })
   unit_id: string;
 
-  @Column({ type: "uuid", nullable: true })
-  branch_id: string;
-
-  @Column({ type: "int", default: 0 })
-  cost: number;
-
   @Column({ type: "int", default: 0 })
   quantity: number;
 
@@ -80,13 +74,6 @@ class InventoryItem {
   })
   @JoinColumn({ name: "unit_id" })
   unit: Unit;
-
-  @ManyToOne(() => Branch, (branch) => branch.inventory_items, {
-    nullable: true,
-    createForeignKeyConstraints: false,
-  })
-  @JoinColumn({ name: "branch_id" })
-  branch: Branch;
 }
 
 export default InventoryItem;

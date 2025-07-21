@@ -2,7 +2,7 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 
 class CreateInventoryDto {
   @IsNotEmpty()
-  branchId: string;
+  businessId: string;
 
   @IsNotEmpty()
   name: string;

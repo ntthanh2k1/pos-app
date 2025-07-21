@@ -14,6 +14,9 @@ class GetInventoriesDto {
   searchColumns: string[];
 
   @IsOptional()
+  businessId: string;
+
+  @IsOptional()
   branchId: string;
 
   @IsOptional()
