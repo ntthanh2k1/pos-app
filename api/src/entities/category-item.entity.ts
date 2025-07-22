@@ -12,7 +12,7 @@ import Item from "./item.entity";
 import Branch from "./branch.entity";
 import Business from "./business.entity";
 
-@Entity("category_item")
+@Entity("category_items")
 class CategoryItem {
   @PrimaryGeneratedColumn("uuid")
   category_item_id: string;

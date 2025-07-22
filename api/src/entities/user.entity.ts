@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import Business from "./business.entity";
 
-@Entity("user")
+@Entity("users")
 class User {
   @PrimaryGeneratedColumn("uuid")
   user_id: string;
@@ -29,14 +29,14 @@ class User {
   @Column({ type: "varchar", length: 256, nullable: true })
   password: string;
 
+  @Column({ type: "varchar", length: 256, nullable: true })
+  image: string;
+
   @Column({ type: "varchar", length: 32, nullable: true })
   phone: string;
 
   @Column({ type: "varchar", length: 128, nullable: true })
   email: string;
-
-  @Column({ type: "varchar", length: 256, nullable: true })
-  image: string;
 
   @Column({ type: "varchar", length: 32, nullable: true })
   identity_number: string;
@@ -48,7 +48,7 @@ class User {
   gender: boolean;
 
   @Column({ nullable: true })
-  birthdate: Date;
+  birth_date: Date;
 
   @Column({ type: "varchar", length: 256, nullable: true })
   address: string;

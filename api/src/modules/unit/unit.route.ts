@@ -14,7 +14,7 @@ import UpdateUnitDto from "./dto/update-unit.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateUnitDto), createUnit);
 router.get("/", validateDto(GetUnitsDto, "query"), getUnits);

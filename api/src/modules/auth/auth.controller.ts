@@ -6,7 +6,7 @@ import {
   createRefreshToken,
   verifyToken,
 } from "../../shared/utils/token";
-import { JwtPayload } from "jsonwebtoken";
+import { JsonWebTokenError, JwtPayload, TokenExpiredError } from "jsonwebtoken";
 import userRepository from "../../repositories/user.repository";
 import redisConfig from "../../config/redis/redis.config";
 
@@ -161,8 +161,8 @@ const refreshToken: Handler = async (
     });
   } catch (error) {
     if (
-      error.name === "TokenExpiredError" ||
-      error.name === "JsonWebTokenError"
+      error instanceof TokenExpiredError ||
+      error instanceof JsonWebTokenError
     ) {
       res.status(401).json({
         sucess: false,

@@ -11,17 +11,15 @@ import {
 import InventoryItem from "./inventory-item.entity";
 import Business from "./business.entity";
 import Branch from "./branch.entity";
+import BranchInventory from "./branch-inventory.entity";
 
-@Entity("inventory")
+@Entity("inventories")
 class Inventory {
   @PrimaryGeneratedColumn("uuid")
   inventory_id: string;
 
   @Column({ type: "uuid", nullable: true })
   business_id: string;
-
-  @Column({ type: "uuid", nullable: true })
-  branch_id: string;
 
   @Column({ type: "varchar", length: 32, unique: true, nullable: true })
   code: string;
@@ -66,12 +64,14 @@ class Inventory {
   @JoinColumn({ name: "business_id" })
   business: Business;
 
-  @ManyToOne(() => Branch, (branch) => branch.inventories, {
-    nullable: true,
-    createForeignKeyConstraints: false,
-  })
-  @JoinColumn({ name: "branch_id" })
-  branch: Branch;
+  @OneToMany(
+    () => BranchInventory,
+    (branch_inventory) => branch_inventory.inventory,
+    {
+      createForeignKeyConstraints: false,
+    }
+  )
+  branch_inventories: BranchInventory[];
 
   @OneToMany(
     () => InventoryItem,

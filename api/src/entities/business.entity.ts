@@ -14,8 +14,9 @@ import CategoryItem from "./category-item.entity";
 import InventoryItem from "./inventory-item.entity";
 import Item from "./item.entity";
 import Unit from "./unit.entity";
+import BranchInventory from "./branch-inventory.entity";
 
-@Entity("business")
+@Entity("businesses")
 class Business {
   @PrimaryGeneratedColumn("uuid")
   business_id: string;
@@ -68,6 +69,15 @@ class Business {
     createForeignKeyConstraints: false,
   })
   inventories: Inventory[];
+
+  @OneToMany(
+    () => BranchInventory,
+    (branch_inventory) => branch_inventory.business,
+    {
+      createForeignKeyConstraints: false,
+    }
+  )
+  branch_inventories: BranchInventory[];
 
   @OneToMany(() => Supplier, (supplier) => supplier.business, {
     createForeignKeyConstraints: false,

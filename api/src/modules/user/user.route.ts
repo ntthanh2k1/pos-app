@@ -14,7 +14,7 @@ import UpdateUserDto from "./dtos/update-user.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateUserDto), createUser);
 router.get("/", validateDto(GetUsersDto, "query"), getUsers);

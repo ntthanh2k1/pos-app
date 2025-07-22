@@ -11,7 +11,7 @@ import {
 import InventoryItem from "./inventory-item.entity";
 import Business from "./business.entity";
 
-@Entity("supplier")
+@Entity("suppliers")
 class Supplier {
   @PrimaryGeneratedColumn("uuid")
   supplier_id: string;

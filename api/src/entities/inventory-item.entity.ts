@@ -15,7 +15,7 @@ import Unit from "./unit.entity";
 import Branch from "./branch.entity";
 import Business from "./business.entity";
 
-@Entity("inventory_item")
+@Entity("inventory_items")
 @Unique(["inventory_id", "item_id"])
 class InventoryItem {
   @PrimaryGeneratedColumn("uuid")

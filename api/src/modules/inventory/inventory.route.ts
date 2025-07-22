@@ -14,7 +14,7 @@ import UpdateInventoryDto from "./dto/update-inventory.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateInventoryDto), createInventory);
 router.get("/", validateDto(GetInventoriesDto, "query"), getInventories);

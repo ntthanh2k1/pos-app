@@ -14,7 +14,7 @@ import UpdateBusinessDto from "./dto/update-business.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateBusinessDto), createBusiness);
 router.get("/", validateDto(GetBusinessesDto, "query"), getBusinesses);

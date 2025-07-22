@@ -14,7 +14,7 @@ import UpdateBranchDto from "./dto/update-branch.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateBranchDto), createBranch);
 router.get("/", validateDto(GetBranchesDto, "query"), getBranches);

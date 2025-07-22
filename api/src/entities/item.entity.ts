@@ -14,7 +14,7 @@ import InventoryItem from "./inventory-item.entity";
 import Branch from "./branch.entity";
 import Business from "./business.entity";
 
-@Entity("item")
+@Entity("items")
 class Item {
   @PrimaryGeneratedColumn("uuid")
   item_id: string;

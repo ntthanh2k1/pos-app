@@ -14,7 +14,7 @@ import UpdateItemDto from "./dto/update-item.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateItemDto), createItem);
 router.get("/", validateDto(GetItemsDto, "query"), getItems);

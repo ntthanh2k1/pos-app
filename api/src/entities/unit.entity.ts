@@ -13,7 +13,7 @@ import InventoryItem from "./inventory-item.entity";
 import Business from "./business.entity";
 import Branch from "./branch.entity";
 
-@Entity("unit")
+@Entity("units")
 class Unit {
   @PrimaryGeneratedColumn("uuid")
   unit_id: string;

@@ -14,7 +14,7 @@ import UpdateSupplierDto from "./dto/update-supplier.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(CreateSupplierDto), createSupplier);
 router.get("/", validateDto(GetSuppliersDto, "query"), getSuppliers);

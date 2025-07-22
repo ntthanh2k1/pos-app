@@ -11,10 +11,10 @@ import {
 import Business from "./business.entity";
 import CategoryItem from "./category-item.entity";
 import Item from "./item.entity";
-import Inventory from "./inventory.entity";
 import Unit from "./unit.entity";
+import BranchInventory from "./branch-inventory.entity";
 
-@Entity("branch")
+@Entity("branches")
 class Branch {
   @PrimaryGeneratedColumn("uuid")
   branch_id: string;
@@ -27,6 +27,9 @@ class Branch {
 
   @Column({ type: "varchar", length: 128, nullable: true })
   name: string;
+
+  @Column({ type: "varchar", length: 256, nullable: true })
+  image: string;
 
   @Column({ type: "varchar", length: 32, nullable: true })
   phone: string;
@@ -65,10 +68,14 @@ class Branch {
   @JoinColumn({ name: "business_id" })
   business: Business;
 
-  @OneToMany(() => Inventory, (inventory) => inventory.branch, {
-    createForeignKeyConstraints: false,
-  })
-  inventories: Inventory[];
+  @OneToMany(
+    () => BranchInventory,
+    (branch_inventory) => branch_inventory.branch,
+    {
+      createForeignKeyConstraints: false,
+    }
+  )
+  branch_inventories: BranchInventory[];
 
   @OneToMany(() => CategoryItem, (category_item) => category_item.branch, {
     createForeignKeyConstraints: false,

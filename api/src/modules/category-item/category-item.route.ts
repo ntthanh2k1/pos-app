@@ -14,7 +14,7 @@ import updateCategoryItemDto from "./dto/update-category-item.dto";
 
 const router = express.Router();
 
-router.use(authorize);
+router.use(authorize());
 
 router.post("/", validateDto(createCategoryItemDto), createCategoryItem);
 router.get("/", validateDto(getCategoryItemsDto, "query"), getCategoryItems);
