@@ -9,6 +9,7 @@ import {
 import { JsonWebTokenError, JwtPayload, TokenExpiredError } from "jsonwebtoken";
 import userRepository from "../../repositories/user.repository";
 import redisConfig from "../../config/redis/redis.config";
+import TokenPayload from "../../shared/interfaces/token-payload.interface";
 
 const register: Handler = async (
   req: Request,
@@ -89,7 +90,8 @@ const login: Handler = async (
         .json({ success: false, message: "Password not valid." });
     }
 
-    const tokenPayload = {
+    const tokenPayload: TokenPayload = {
+      businessId: currentUser.business_id,
       userId: currentUser.user_id,
       username: currentUser.username,
       jti: crypto.randomUUID(),
@@ -120,6 +122,7 @@ const refreshToken: Handler = async (
 ): Promise<any> => {
   try {
     const refreshToken = req.cookies["refresh_token"];
+    const { branchId } = req.body;
 
     if (!refreshToken) {
       return res
@@ -142,7 +145,9 @@ const refreshToken: Handler = async (
         .json({ success: false, message: "Refresh token not valid." });
     }
 
-    const tokenPayload = {
+    const tokenPayload: TokenPayload = {
+      businessId: decoded.business_id,
+      branchId,
       userId: decoded.userId,
       username: decoded.username,
       jti: decoded.jti,

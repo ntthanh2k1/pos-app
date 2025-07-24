@@ -29,7 +29,6 @@ const createBranch: Handler = async (
     await inventoryRepository.create({
       code: inventoryCode,
       name: `Main Inventory Of ${name} Branch`,
-      branch_id: newBranch.branch_id,
       is_main_inventory: true,
       created_by: req["user"].username,
     });

@@ -53,11 +53,11 @@ const getInventories: Handler = async (
     }
 
     if (branchId) {
-      filters.branch_id = branchId;
+      filters.branchId = branchId;
     }
 
-    if (typeof isActive === "boolean") {
-      filters.is_active = isActive;
+    if (typeof isActive === "string") {
+      filters.is_active = isActive === "true";
     }
 
     const filterData: any = {

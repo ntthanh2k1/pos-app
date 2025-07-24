@@ -15,7 +15,7 @@ const createUnit: Handler = async (
       name,
       symbol,
       note,
-      created_by: req["user"].username,
+      created_by: req["user"].userId,
     });
 
     res.status(201).json({
@@ -100,7 +100,7 @@ const updateUnit: Handler = async (
       symbol,
       note,
       is_active: isActive,
-      updated_by: req["user"].username,
+      updated_by: req["user"].userId,
     });
 
     if (!currentUnit) {

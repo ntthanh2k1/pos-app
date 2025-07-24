@@ -11,34 +11,35 @@ const inventoryRepository = {
   ...base,
 
   getInventories: async (filterData: FilterData<Inventory>) => {
-    // const { filters, ...rest } = filterData;
-    // const updateFilters: Record<string, any> = {};
+    const { filters, ...rest } = filterData;
+    const updateFilters: Record<string, any> = {};
 
-    // if (filters?.businessId) {
-    //   updateFilters["business.business_id"] = filters.businessId;
-    //   delete filters.businessId;
-    // }
+    if (filters?.branchId) {
+      updateFilters["branch_inventories.branch_id"] = filters.branchId;
+      delete filters.branchId;
+    }
 
-    // if (filters?.branchId) {
-    //   updateFilters["branch.branch_id"] = filters.branchId;
-    //   delete filters.branchId;
-    // }
+    Object.assign(updateFilters, filters);
 
-    // Object.assign(updateFilters, filters);
+    return await base.getAll(
+      {
+        ...rest,
+        filters: updateFilters,
+      },
+      (qb) =>
+        qb
+          .leftJoin("entity.branch_inventories", "branch_inventories")
+          .leftJoin("branch_inventories.branch", "branch")
+          .leftJoin("entity.business", "business")
+          .addSelect([
+            "business.business_id",
+            "business.code",
+            "business.name",
 
-    return await base.getAll(filterData, (qb) =>
-      qb
-        .leftJoin("entity.business", "business")
-        .leftJoin("entity.branch", "branch")
-        .addSelect([
-          "business.business_id",
-          "business.code",
-          "business.name",
-
-          "branch.branch_id",
-          "branch.code",
-          "branch.name",
-        ])
+            "branch.branch_id",
+            "branch.code",
+            "branch.name",
+          ])
     );
   },
 };

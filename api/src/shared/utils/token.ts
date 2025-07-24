@@ -1,8 +1,9 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
 import redisConfig from "../../config/redis/redis.config";
+import TokenPayload from "../interfaces/token-payload.interface";
 
-const createAccessToken = async (tokenPayload: any, res: Response) => {
+const createAccessToken = async (tokenPayload: TokenPayload, res: Response) => {
   const accessToken = jwt.sign(
     {
       userId: tokenPayload.userId,
@@ -25,7 +26,10 @@ const createAccessToken = async (tokenPayload: any, res: Response) => {
   return accessToken;
 };
 
-const createRefreshToken = async (tokenPayload: any, res: Response) => {
+const createRefreshToken = async (
+  tokenPayload: TokenPayload,
+  res: Response
+) => {
   const refreshToken = jwt.sign(
     {
       userId: tokenPayload.userId,
