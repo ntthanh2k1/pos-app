@@ -19,7 +19,6 @@ const createInventory: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Create inventory successfully.",
       data: newInventory,
     });
@@ -53,7 +52,7 @@ const getInventories: Handler = async (
     }
 
     if (branchId) {
-      filters.branchId = branchId;
+      filters.branch_id = branchId;
     }
 
     if (typeof isActive === "string") {
@@ -74,7 +73,7 @@ const getInventories: Handler = async (
     };
     const inventories = await inventoryRepository.getInventories(filterData);
 
-    res.status(200).json({ success: true, ...inventories });
+    res.status(200).json({ ...inventories });
   } catch (error) {
     error.methodName = getInventories.name;
     next(error);
@@ -93,12 +92,10 @@ const getInventory: Handler = async (
     });
 
     if (!currentInventory) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Inventory not found." });
+      return res.status(404).json({ message: "Inventory not found." });
     }
 
-    res.status(200).json({ success: true, data: currentInventory });
+    res.status(200).json({ data: currentInventory });
   } catch (error) {
     error.methodName = getInventory.name;
     next(error);
@@ -120,13 +117,10 @@ const updateInventory: Handler = async (
     });
 
     if (!currentInventory) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Inventory not found." });
+      return res.status(404).json({ message: "Inventory not found." });
     }
 
     res.status(200).json({
-      success: true,
       message: "Update inventory successfully.",
       data: currentInventory,
     });
@@ -146,10 +140,7 @@ const deleteInventory: Handler = async (
 
     await inventoryRepository.delete(id);
 
-    res.status(200).json({
-      success: true,
-      message: "Delete inventory successfully.",
-    });
+    res.status(200).json({ message: "Delete inventory successfully." });
   } catch (error) {
     error.methodName = deleteInventory.name;
     next(error);

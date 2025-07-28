@@ -13,6 +13,7 @@ import CategoryItem from "./category-item.entity";
 import Item from "./item.entity";
 import Unit from "./unit.entity";
 import BranchInventory from "./branch-inventory.entity";
+import BranchUser from "./branch-user.entity";
 
 @Entity("branches")
 class Branch {
@@ -91,6 +92,11 @@ class Branch {
     createForeignKeyConstraints: false,
   })
   units: Unit[];
+
+  @OneToMany(() => BranchUser, (branch_user) => branch_user.branch, {
+    createForeignKeyConstraints: false,
+  })
+  branch_users: BranchUser[];
 }
 
 export default Branch;

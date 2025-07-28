@@ -22,7 +22,6 @@ const createItem: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Create item successfully.",
       data: newItem,
     });
@@ -77,7 +76,7 @@ const getItems: Handler = async (
     };
     const items = await itemRepository.getItems(filterData);
 
-    res.status(200).json({ success: true, ...items });
+    res.status(200).json({ ...items });
   } catch (error) {
     error.methodName = getItems.name;
     next(error);
@@ -96,12 +95,10 @@ const getItem: Handler = async (
     });
 
     if (!currentItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Item not found." });
+      return res.status(404).json({ message: "Item not found." });
     }
 
-    res.status(200).json({ success: true, data: currentItem });
+    res.status(200).json({ data: currentItem });
   } catch (error) {
     error.methodName = getItem.name;
     next(error);
@@ -129,16 +126,12 @@ const updateItem: Handler = async (
     });
 
     if (!currentItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Item not found." });
+      return res.status(404).json({ message: "Item not found." });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Update item successfully.",
-      data: currentItem,
-    });
+    res
+      .status(200)
+      .json({ message: "Update item successfully.", data: currentItem });
   } catch (error) {
     error.methodName = updateItem.name;
     next(error);
@@ -155,10 +148,7 @@ const deleteItem: Handler = async (
 
     await itemRepository.delete(id);
 
-    res.status(200).json({
-      success: true,
-      message: "Delete item successfully.",
-    });
+    res.status(200).json({ message: "Delete item successfully." });
   } catch (error) {
     error.methodName = deleteItem.name;
     next(error);

@@ -12,7 +12,6 @@ const validateDto = (
 
       if (data === null || typeof data !== "object") {
         res.status(400).json({
-          success: false,
           message: "Request data format not valid.",
         });
         return;
@@ -26,7 +25,6 @@ const validateDto = (
 
       if (errors.length > 0) {
         res.status(400).json({
-          success: false,
           message: "Fail to validate request data.",
           errors: errors.map((e) => ({
             field: e.property,

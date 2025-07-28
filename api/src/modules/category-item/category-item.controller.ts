@@ -12,6 +12,8 @@ const createCategoryItem: Handler = async (
     const code = createCode("CIM");
     const newCategoryItem = await categoryItemRepository.create({
       parent_id,
+      business_id: req["user"].businessId,
+      branch_id: req["user"].branchId,
       code,
       name,
       note,
@@ -19,7 +21,6 @@ const createCategoryItem: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Create category item successfully.",
       data: newCategoryItem,
     });
@@ -41,6 +42,8 @@ const getCategoryItems: Handler = async (
       search,
       searchColumns,
       parentId,
+      businessId,
+      branchId,
       isActive,
       orderBy,
       orderDir,
@@ -49,6 +52,14 @@ const getCategoryItems: Handler = async (
 
     if (parentId) {
       filters.parent_id = parentId;
+    }
+
+    if (businessId) {
+      filters.business_id = businessId;
+    }
+
+    if (branchId) {
+      filters.branch_id = branchId;
     }
 
     if (typeof isActive === "boolean") {
@@ -71,7 +82,7 @@ const getCategoryItems: Handler = async (
       filterData
     );
 
-    res.status(200).json({ success: true, ...categoryItems });
+    res.status(200).json({ ...categoryItems });
   } catch (error) {
     error.methodName = getCategoryItems.name;
     next(error);
@@ -90,12 +101,10 @@ const getCategoryItem: Handler = async (
     });
 
     if (!currentCategoryItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Category item not found." });
+      return res.status(404).json({ message: "Category item not found." });
     }
 
-    res.status(200).json({ success: true, data: currentCategoryItem });
+    res.status(200).json({ data: currentCategoryItem });
   } catch (error) {
     error.methodName = getCategoryItem.name;
     next(error);
@@ -119,13 +128,10 @@ const updateCategoryItem: Handler = async (
     });
 
     if (!currentCategoryItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Category item not found." });
+      return res.status(404).json({ message: "Category item not found." });
     }
 
     res.status(200).json({
-      success: true,
       message: "Update category item successfully.",
       data: currentCategoryItem,
     });
@@ -145,10 +151,7 @@ const deleteCategoryItem: Handler = async (
 
     await categoryItemRepository.delete(id);
 
-    res.status(200).json({
-      success: true,
-      message: "Delete category item successfully.",
-    });
+    res.status(200).json({ message: "Delete category item successfully." });
   } catch (error) {
     error.methodName = deleteCategoryItem.name;
     next(error);

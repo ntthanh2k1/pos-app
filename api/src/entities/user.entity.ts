@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import Business from "./business.entity";
+import BranchUser from "./branch-user.entity";
 
 @Entity("users")
 class User {
@@ -77,6 +79,11 @@ class User {
   })
   @JoinColumn({ name: "business_id" })
   business: Business;
+
+  @OneToMany(() => BranchUser, (branchUser) => branchUser.user, {
+    createForeignKeyConstraints: false,
+  })
+  branch_users: BranchUser[];
 }
 
 export default User;

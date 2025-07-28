@@ -2,6 +2,7 @@ import { Response } from "express";
 import jwt from "jsonwebtoken";
 import redisConfig from "../../config/redis/redis.config";
 import TokenPayload from "../interfaces/token-payload.interface";
+import { REDIS_PREFIX } from "./constant";
 
 const createAccessToken = async (tokenPayload: TokenPayload, res: Response) => {
   const accessToken = jwt.sign(
@@ -14,6 +15,12 @@ const createAccessToken = async (tokenPayload: TokenPayload, res: Response) => {
     {
       expiresIn: parseInt(process.env.ACCESS_TOKEN_TTL),
     }
+  );
+
+  await redisConfig.setValue(
+    `${REDIS_PREFIX}:accessToken:${tokenPayload.username}:${tokenPayload.jti}`,
+    accessToken,
+    parseInt(process.env.ACCESS_TOKEN_TTL)
   );
 
   res.cookie("access_token", accessToken, {
@@ -43,7 +50,7 @@ const createRefreshToken = async (
   );
 
   await redisConfig.setValue(
-    `rt:pos:${tokenPayload.username}:${tokenPayload.jti}`,
+    `${REDIS_PREFIX}:refreshToken:${tokenPayload.username}:${tokenPayload.jti}`,
     refreshToken,
     parseInt(process.env.REFRESH_TOKEN_TTL)
   );

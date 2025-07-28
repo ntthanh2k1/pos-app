@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../shared/utils/token";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import TokenPayload from "../shared/interfaces/token-payload.interface";
+import redisConfig from "../config/redis/redis.config";
+import { REDIS_PREFIX } from "../shared/utils/constant";
 
 const authorize =
   (requireBranch = true) =>
@@ -19,7 +21,6 @@ const authorize =
 
       if (!accessToken) {
         res.status(401).json({
-          success: false,
           message: "Access token not provided.",
         });
         return;
@@ -30,11 +31,21 @@ const authorize =
         process.env.ACCESS_TOKEN_SECRET
       ) as TokenPayload;
 
+      const redisAccessToken = await redisConfig.getValue(
+        `${REDIS_PREFIX}:accessToken:${decoded.username}:${decoded.jti}`
+      );
+
+      if (!redisAccessToken || redisAccessToken !== accessToken) {
+        res.status(401).json({
+          message: "Access token not valid.",
+        });
+        return;
+      }
+
       req["user"] = decoded;
 
       if (requireBranch && !decoded.branchId) {
         res.status(401).json({
-          success: false,
           message: "Branch not found.",
         });
         return;
@@ -47,7 +58,6 @@ const authorize =
         error instanceof JsonWebTokenError
       ) {
         res.status(401).json({
-          sucess: false,
           message: "Access token not valid.",
         });
         return;

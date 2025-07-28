@@ -24,7 +24,6 @@ const createSupplier: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Create supplier successfully.",
       data: newSupplier,
     });
@@ -74,7 +73,7 @@ const getSuppliers: Handler = async (
     };
     const suppliers = await supplierRepository.getAll(filterData);
 
-    res.status(200).json({ success: true, ...suppliers });
+    res.status(200).json({ ...suppliers });
   } catch (error) {
     error.methodName = getSuppliers.name;
     next(error);
@@ -93,12 +92,10 @@ const getSupplier: Handler = async (
     });
 
     if (!currentSupplier) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Supplier not found." });
+      return res.status(400).json({ message: "Supplier not found." });
     }
 
-    res.status(200).json({ success: true, data: currentSupplier });
+    res.status(200).json({ data: currentSupplier });
   } catch (error) {
     error.methodName = getSupplier.name;
     next(error);
@@ -126,13 +123,10 @@ const updateSupplier: Handler = async (
     });
 
     if (!currentSupplier) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Supplier not found." });
+      return res.status(400).json({ message: "Supplier not found." });
     }
 
     res.status(200).json({
-      success: true,
       message: "Update supplier successfully.",
       data: currentSupplier,
     });
@@ -152,9 +146,7 @@ const deleteSupplier: Handler = async (
 
     await supplierRepository.delete(id);
 
-    res
-      .status(200)
-      .json({ success: true, message: "Delete supplier successfully." });
+    res.status(200).json({ message: "Delete supplier successfully." });
   } catch (error) {
     error.methodName = deleteSupplier.name;
     next(error);

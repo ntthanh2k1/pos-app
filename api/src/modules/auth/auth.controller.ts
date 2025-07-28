@@ -10,6 +10,9 @@ import { JsonWebTokenError, JwtPayload, TokenExpiredError } from "jsonwebtoken";
 import userRepository from "../../repositories/user.repository";
 import redisConfig from "../../config/redis/redis.config";
 import TokenPayload from "../../shared/interfaces/token-payload.interface";
+import { REDIS_PREFIX } from "../../shared/utils/constant";
+import branchUserRepository from "../../repositories/branch-user.repository";
+import branchRepository from "../../repositories/branch.repository";
 
 const register: Handler = async (
   req: Request,
@@ -23,12 +26,11 @@ const register: Handler = async (
     if (currentUser) {
       return res
         .status(400)
-        .json({ success: false, message: `User ${username} already exists.` });
+        .json({ message: `User ${username} already exists.` });
     }
 
     if (password !== confirmPassword) {
       return res.status(400).json({
-        success: false,
         message: "Password and confirm password not match.",
       });
     }
@@ -43,7 +45,6 @@ const register: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Register successfully.",
       data: {
         user_id: newUser.user_id,
@@ -68,15 +69,13 @@ const login: Handler = async (
     const currentUser = await userRepository.getOneBy({ username });
 
     if (!currentUser) {
-      return res
-        .status(404)
-        .json({ success: false, message: `User ${username} not exists.` });
+      return res.status(404).json({ message: `User ${username} not exists.` });
     }
 
     if (!currentUser.is_active) {
       return res
         .status(400)
-        .json({ success: false, message: `User ${username} not activates.` });
+        .json({ message: `User ${username} not activates.` });
     }
 
     const isPasswordValid = await verifyPassword(
@@ -85,9 +84,7 @@ const login: Handler = async (
     );
 
     if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Password not valid." });
+      return res.status(400).json({ message: "Password not valid." });
     }
 
     const tokenPayload: TokenPayload = {
@@ -100,7 +97,6 @@ const login: Handler = async (
     const refreshToken = await createRefreshToken(tokenPayload, res);
 
     res.status(200).json({
-      success: true,
       message: "Login successfully.",
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -125,9 +121,7 @@ const refreshToken: Handler = async (
     const { branchId } = req.body;
 
     if (!refreshToken) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Refresh token not found." });
+      return res.status(401).json({ message: "Refresh token not provided." });
     }
 
     const decoded = verifyToken(
@@ -136,13 +130,19 @@ const refreshToken: Handler = async (
     ) as JwtPayload;
 
     const redisRefreshToken = await redisConfig.getValue(
-      `rt:pos:${decoded.username}:${decoded.jti}`
+      `${REDIS_PREFIX}:refreshToken:${decoded.username}:${decoded.jti}`
     );
 
-    if (redisRefreshToken !== refreshToken) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Refresh token not valid." });
+    if (!redisRefreshToken || redisRefreshToken !== refreshToken) {
+      return res.status(401).json({ message: "Refresh token not valid." });
+    }
+
+    const redisAccessToken = await redisConfig.getValue(
+      `${REDIS_PREFIX}:accessToken:${decoded.username}:${decoded.jti}`
+    );
+
+    if (!redisAccessToken) {
+      return res.status(401).json({ message: "Access token revoked." });
     }
 
     const tokenPayload: TokenPayload = {
@@ -155,7 +155,6 @@ const refreshToken: Handler = async (
     const accessToken = await createAccessToken(tokenPayload, res);
 
     res.status(200).json({
-      success: true,
       message: "Refresh token successfully.",
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -190,13 +189,12 @@ const logout: Handler = async (
     const authUser = req["user"];
 
     await redisConfig.deleteValue(
-      `rt:pos:${authUser.username}:${authUser.jti}`
+      `${REDIS_PREFIX}:*:${authUser.username}:${authUser.jti}`
     );
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 
     res.status(200).json({
-      success: true,
       message: "Logout successfully.",
     });
   } catch (error) {
@@ -213,7 +211,7 @@ const getAuthUser: Handler = async (
   try {
     const authUser = req["user"];
 
-    res.status(200).json({ success: true, data: authUser });
+    res.status(200).json({ data: authUser });
   } catch (error) {
     error.methodName = getAuthUser.name;
     next(error);
@@ -233,9 +231,7 @@ const changePassword: Handler = async (
     });
 
     if (!currentUser) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
+      return res.status(404).json({ message: "User not found." });
     }
 
     const isPasswordValid = await verifyPassword(
@@ -244,14 +240,11 @@ const changePassword: Handler = async (
     );
 
     if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Current password not valid." });
+      return res.status(400).json({ message: "Current password not valid." });
     }
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
-        success: false,
         message: "New password and confirm password not match.",
       });
     }
@@ -262,17 +255,66 @@ const changePassword: Handler = async (
       password: hashedPassword,
     });
 
-    await redisConfig.deleteKeysByPattern(`rt:pos:${authUser.username}:*`);
+    await redisConfig.deleteKeysByPattern(
+      `${REDIS_PREFIX}:*:${authUser.username}:*`
+    );
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 
-    res
-      .status(200)
-      .json({ success: true, message: "Change password successfully." });
+    res.status(200).json({ message: "Change password successfully." });
   } catch (error) {
     error.methodName = changePassword.name;
     next(error);
   }
 };
 
-export { register, login, refreshToken, logout, getAuthUser, changePassword };
+const selectBranch: Handler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const authUser = req["user"];
+    const { branchId } = req.body;
+    const currentBranch = await branchRepository.getOneBy({
+      branch_id: branchId,
+    });
+
+    if (!currentBranch) {
+      return res.status(404).json({ message: "Branch not found." });
+    }
+
+    const isValidBranch = await branchUserRepository.getOneBy({
+      branch_id: branchId,
+      user_id: authUser.userId,
+    });
+
+    if (!isValidBranch) {
+      return res.status(400).json({ message: "Branch not valid." });
+    }
+
+    const tokenPayload: TokenPayload = {
+      ...authUser,
+      branchId,
+    };
+
+    const accessToken = await createAccessToken(tokenPayload, res);
+
+    res
+      .status(200)
+      .json({ message: "Select branch successfully.", accessToken });
+  } catch (error) {
+    error.methodName = selectBranch.name;
+    next(error);
+  }
+};
+
+export {
+  register,
+  login,
+  refreshToken,
+  logout,
+  getAuthUser,
+  changePassword,
+  selectBranch,
+};

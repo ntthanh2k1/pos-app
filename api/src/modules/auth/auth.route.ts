@@ -26,5 +26,6 @@ router.patch(
   validateDto(ChangePasswordDto),
   changePassword
 );
+router.post("/select-branch", authorize(false), changePassword);
 
 export default router;

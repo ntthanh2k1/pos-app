@@ -14,6 +14,7 @@ const createBranch: Handler = async (
     // create branch
     const code = createCode("BH");
     const newBranch = await branchRepository.create({
+      business_id: req["user"].businessId,
       code,
       name,
       phone,
@@ -34,7 +35,6 @@ const createBranch: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Create branch successfully.",
       data: newBranch,
     });
@@ -50,12 +50,24 @@ const getBranches: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { page, limit, search, searchColumns, isActive, orderBy, orderDir } =
-      req.query;
+    const {
+      page,
+      limit,
+      search,
+      searchColumns,
+      businessId,
+      isActive,
+      orderBy,
+      orderDir,
+    } = req.query;
     const filters: Record<string, any> = {};
 
-    if (typeof isActive === "boolean") {
-      filters.is_active = isActive;
+    if (businessId) {
+      filters.business_id = businessId;
+    }
+
+    if (typeof isActive === "string") {
+      filters.is_active = isActive === "true";
     }
 
     const filterData: any = {
@@ -72,7 +84,7 @@ const getBranches: Handler = async (
     };
     const branches = await branchRepository.getAll(filterData);
 
-    res.status(200).json({ success: true, ...branches });
+    res.status(200).json({ ...branches });
   } catch (error) {
     error.methodName = getBranches.name;
     next(error);
@@ -91,12 +103,10 @@ const getBranch: Handler = async (
     });
 
     if (!currentBranch) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Branch not found." });
+      return res.status(404).json({ message: "Branch not found." });
     }
 
-    res.status(200).json({ success: true, data: currentBranch });
+    res.status(200).json({ data: currentBranch });
   } catch (error) {
     error.methodName = getBranch.name;
     next(error);
@@ -122,16 +132,12 @@ const updateBranch: Handler = async (
     });
 
     if (!currentBranch) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Branch not found." });
+      return res.status(404).json({ message: "Branch not found." });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Update branch successfully.",
-      data: currentBranch,
-    });
+    res
+      .status(200)
+      .json({ message: "Update branch successfully.", data: currentBranch });
   } catch (error) {
     error.methodName = updateBranch.name;
     next(error);
@@ -148,9 +154,7 @@ const deleteBranch: Handler = async (
 
     await branchRepository.delete(id);
 
-    res
-      .status(200)
-      .json({ success: true, message: "Delete branch successfully." });
+    res.status(200).json({ message: "Delete branch successfully." });
   } catch (error) {
     error.methodName = deleteBranch.name;
     next(error);

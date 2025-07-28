@@ -7,7 +7,6 @@ const globalLimiter = rateLimit({
   headers: true,
   handler: (req: Request, res: Response, next: NextFunction) => {
     return res.status(429).json({
-      success: false,
       message: "Too many requests. Please try again later.",
     });
   },

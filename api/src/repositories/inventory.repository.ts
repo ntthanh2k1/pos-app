@@ -14,9 +14,9 @@ const inventoryRepository = {
     const { filters, ...rest } = filterData;
     const updateFilters: Record<string, any> = {};
 
-    if (filters?.branchId) {
-      updateFilters["branch_inventories.branch_id"] = filters.branchId;
-      delete filters.branchId;
+    if (filters?.branch_id) {
+      updateFilters["branch_inventories.branch_id"] = filters.branch_id;
+      delete filters.branch_id;
     }
 
     Object.assign(updateFilters, filters);

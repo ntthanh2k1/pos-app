@@ -19,7 +19,6 @@ const createUnit: Handler = async (
     });
 
     res.status(201).json({
-      success: true,
       message: "Create unit successfully.",
       data: newUnit,
     });
@@ -58,7 +57,7 @@ const getUnits: Handler = async (
 
     const units = await unitRepository.getAll(filterData);
 
-    res.status(200).json({ success: true, ...units });
+    res.status(200).json({ ...units });
   } catch (error) {
     error.methodName = getUnits.name;
     next(error);
@@ -75,12 +74,10 @@ const getUnit: Handler = async (
     const currentUnit = await unitRepository.getOneBy({ unit_id: id });
 
     if (!currentUnit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found." });
+      return res.status(404).json({ message: "Unit not found." });
     }
 
-    res.status(200).json({ success: true, data: currentUnit });
+    res.status(200).json({ data: currentUnit });
   } catch (error) {
     error.methodName = getUnit.name;
     next(error);
@@ -104,13 +101,10 @@ const updateUnit: Handler = async (
     });
 
     if (!currentUnit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Unit not found." });
+      return res.status(404).json({ message: "Unit not found." });
     }
 
     res.status(200).json({
-      success: true,
       message: "Update unit successfully.",
       data: currentUnit,
     });
@@ -131,7 +125,6 @@ const deleteUnit: Handler = async (
     await unitRepository.delete(id);
 
     res.status(200).json({
-      success: true,
       message: "Delete unit successfully.",
     });
   } catch (error) {

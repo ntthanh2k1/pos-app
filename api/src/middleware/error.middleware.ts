@@ -8,7 +8,6 @@ const errorHandler = (
   next: NextFunction
 ) => {
   res.status(500).json({
-    success: false,
     message: `Error in ${err.methodName} module: ${err.message}`,
   });
 };

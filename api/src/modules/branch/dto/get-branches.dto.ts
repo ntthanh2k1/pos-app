@@ -14,6 +14,9 @@ class GetBranchesDto {
   searchColumns: string[];
 
   @IsOptional()
+  businessId: string;
+
+  @IsOptional()
   isActive: boolean;
 
   @IsOptional()

@@ -15,6 +15,7 @@ import InventoryItem from "./inventory-item.entity";
 import Item from "./item.entity";
 import Unit from "./unit.entity";
 import BranchInventory from "./branch-inventory.entity";
+import BranchUser from "./branch-user.entity";
 
 @Entity("businesses")
 class Business {
@@ -108,6 +109,11 @@ class Business {
     createForeignKeyConstraints: false,
   })
   units: Unit[];
+
+  @OneToMany(() => BranchUser, (branch_user) => branch_user.business, {
+    createForeignKeyConstraints: false,
+  })
+  branch_users: BranchUser[];
 }
 
 export default Business;
