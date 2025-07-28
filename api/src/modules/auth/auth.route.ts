@@ -18,11 +18,11 @@ const router = express.Router();
 router.post("/register", validateDto(RegisterDto), register);
 router.post("/login", validateDto(LoginDto), login);
 router.post("/refresh-token", refreshToken);
-router.post("/logout", authorize(), logout);
-router.get("/get-auth-user", authorize(), getAuthUser);
+router.post("/logout", authorize(false), logout);
+router.get("/get-auth-user", authorize(false), getAuthUser);
 router.patch(
   "/change-password",
-  authorize(),
+  authorize(false),
   validateDto(ChangePasswordDto),
   changePassword
 );
