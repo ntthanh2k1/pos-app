@@ -17,7 +17,7 @@ const createCategoryItem: Handler = async (
       code,
       name,
       note,
-      created_by: req["user"].username,
+      created_by: req["user"].userId,
     });
 
     res.status(201).json({
@@ -62,8 +62,8 @@ const getCategoryItems: Handler = async (
       filters.branch_id = branchId;
     }
 
-    if (typeof isActive === "boolean") {
-      filters.is_active = isActive;
+    if (typeof isActive === "string") {
+      filters.is_active = isActive === "true";
     }
 
     const filterData: any = {
@@ -82,7 +82,9 @@ const getCategoryItems: Handler = async (
       filterData
     );
 
-    res.status(200).json({ ...categoryItems });
+    res.status(200).json({
+      ...categoryItems,
+    });
   } catch (error) {
     error.methodName = getCategoryItems.name;
     next(error);
@@ -101,10 +103,14 @@ const getCategoryItem: Handler = async (
     });
 
     if (!currentCategoryItem) {
-      return res.status(404).json({ message: "Category item not found." });
+      return res.status(404).json({
+        message: "Category item not found.",
+      });
     }
 
-    res.status(200).json({ data: currentCategoryItem });
+    res.status(200).json({
+      data: currentCategoryItem,
+    });
   } catch (error) {
     error.methodName = getCategoryItem.name;
     next(error);
@@ -124,11 +130,13 @@ const updateCategoryItem: Handler = async (
       name,
       note,
       is_active: isActive,
-      updated_by: req["user"].username,
+      updated_by: req["user"].userId,
     });
 
     if (!currentCategoryItem) {
-      return res.status(404).json({ message: "Category item not found." });
+      return res.status(404).json({
+        message: "Category item not found.",
+      });
     }
 
     res.status(200).json({
@@ -151,7 +159,9 @@ const deleteCategoryItem: Handler = async (
 
     await categoryItemRepository.delete(id);
 
-    res.status(200).json({ message: "Delete category item successfully." });
+    res.status(200).json({
+      message: "Delete category item successfully.",
+    });
   } catch (error) {
     error.methodName = deleteCategoryItem.name;
     next(error);

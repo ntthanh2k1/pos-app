@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import CustomError from "../shared/interfaces/custom-error.interface";
+import CustomError from "../shared/utils/custom-error";
 
 const errorHandler = (
   err: CustomError,
@@ -7,8 +7,11 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  res.status(500).json({
-    message: `Error in ${err.methodName} module: ${err.message}`,
+  const status = err.statusCode || 500;
+  res.status(status).json({
+    message: err.methodName
+      ? `Error in ${err.methodName} module: ${err.message}`
+      : err.message,
   });
 };
 

@@ -20,13 +20,13 @@ const register: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { name, username, password, confirmPassword } = req.body;
+    const { name, phone, username, password, confirmPassword } = req.body;
     const currentUser = await userRepository.getOneBy({ username });
 
     if (currentUser) {
-      return res
-        .status(400)
-        .json({ message: `User ${username} already exists.` });
+      return res.status(400).json({
+        message: `User ${username} already exists.`,
+      });
     }
 
     if (password !== confirmPassword) {
@@ -40,6 +40,7 @@ const register: Handler = async (
     const newUser = await userRepository.create({
       code: userCode,
       name,
+      phone,
       username,
       password: hashedPassword,
     });
@@ -69,13 +70,15 @@ const login: Handler = async (
     const currentUser = await userRepository.getOneBy({ username });
 
     if (!currentUser) {
-      return res.status(404).json({ message: `User ${username} not exists.` });
+      return res.status(404).json({
+        message: `User ${username} not exists.`,
+      });
     }
 
     if (!currentUser.is_active) {
-      return res
-        .status(400)
-        .json({ message: `User ${username} not activates.` });
+      return res.status(400).json({
+        message: `User ${username} not activates.`,
+      });
     }
 
     const isPasswordValid = await verifyPassword(
@@ -84,7 +87,9 @@ const login: Handler = async (
     );
 
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Password not valid." });
+      return res.status(400).json({
+        message: "Password not valid.",
+      });
     }
 
     const tokenPayload: TokenPayload = {
@@ -121,7 +126,9 @@ const refreshToken: Handler = async (
     const { branchId } = req.body;
 
     if (!refreshToken) {
-      return res.status(401).json({ message: "Refresh token not provided." });
+      return res.status(401).json({
+        message: "Refresh token not provided.",
+      });
     }
 
     const decoded = verifyToken(
@@ -142,7 +149,9 @@ const refreshToken: Handler = async (
     );
 
     if (!redisAccessToken) {
-      return res.status(401).json({ message: "Access token revoked." });
+      return res.status(401).json({
+        message: "Access token revoked.",
+      });
     }
 
     const tokenPayload: TokenPayload = {
@@ -231,7 +240,9 @@ const changePassword: Handler = async (
     });
 
     if (!currentUser) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({
+        message: "User not found.",
+      });
     }
 
     const isPasswordValid = await verifyPassword(
@@ -240,7 +251,9 @@ const changePassword: Handler = async (
     );
 
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Current password not valid." });
+      return res.status(400).json({
+        message: "Current password not valid.",
+      });
     }
 
     if (newPassword !== confirmPassword) {
@@ -261,7 +274,9 @@ const changePassword: Handler = async (
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
 
-    res.status(200).json({ message: "Change password successfully." });
+    res.status(200).json({
+      message: "Change password successfully.",
+    });
   } catch (error) {
     error.methodName = changePassword.name;
     next(error);
@@ -281,7 +296,9 @@ const selectBranch: Handler = async (
     });
 
     if (!currentBranch) {
-      return res.status(404).json({ message: "Branch not found." });
+      return res.status(404).json({
+        message: "Branch not found.",
+      });
     }
 
     const isValidBranch = await branchUserRepository.getOneBy({
@@ -300,9 +317,10 @@ const selectBranch: Handler = async (
 
     const accessToken = await createAccessToken(tokenPayload, res);
 
-    res
-      .status(200)
-      .json({ message: "Select branch successfully.", accessToken });
+    res.status(200).json({
+      message: "Select branch successfully.",
+      accessToken,
+    });
   } catch (error) {
     error.methodName = selectBranch.name;
     next(error);

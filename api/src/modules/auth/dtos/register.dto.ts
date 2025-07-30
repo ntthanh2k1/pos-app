@@ -5,6 +5,9 @@ class RegisterDto {
   name: string;
 
   @IsNotEmpty()
+  phone: string;
+
+  @IsNotEmpty()
   username: string;
 
   @IsNotEmpty()

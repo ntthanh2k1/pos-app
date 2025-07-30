@@ -2,6 +2,7 @@ import { Handler, NextFunction, Request, Response } from "express";
 import createCode from "../../shared/utils/create-code";
 import branchRepository from "../../repositories/branch.repository";
 import inventoryRepository from "../../repositories/inventory.repository";
+import branchInventoryRepository from "../../repositories/branch-inventory.repository";
 
 const createBranch: Handler = async (
   req: Request,
@@ -22,16 +23,24 @@ const createBranch: Handler = async (
       tax_number: taxNumber,
       address,
       note,
-      created_by: req["user"].username,
+      created_by: req["user"].userId,
     });
 
     // create inventory
     const inventoryCode = createCode("IY");
-    await inventoryRepository.create({
+    const newInventory = await inventoryRepository.create({
       code: inventoryCode,
-      name: `Main Inventory Of ${name} Branch`,
+      name: `${name}'s Main Inventory`,
       is_main_inventory: true,
-      created_by: req["user"].username,
+      created_by: req["user"].userId,
+    });
+
+    // create branch-inventory
+    await branchInventoryRepository.create({
+      branch_id: newBranch.branch_id,
+      inventory_id: newInventory.inventory_id,
+      business_id: req["user"].businessId,
+      created_by: req["user"].userId,
     });
 
     res.status(201).json({
@@ -84,7 +93,9 @@ const getBranches: Handler = async (
     };
     const branches = await branchRepository.getAll(filterData);
 
-    res.status(200).json({ ...branches });
+    res.status(200).json({
+      ...branches,
+    });
   } catch (error) {
     error.methodName = getBranches.name;
     next(error);
@@ -103,10 +114,14 @@ const getBranch: Handler = async (
     });
 
     if (!currentBranch) {
-      return res.status(404).json({ message: "Branch not found." });
+      return res.status(404).json({
+        message: "Branch not found.",
+      });
     }
 
-    res.status(200).json({ data: currentBranch });
+    res.status(200).json({
+      data: currentBranch,
+    });
   } catch (error) {
     error.methodName = getBranch.name;
     next(error);
@@ -128,11 +143,13 @@ const updateBranch: Handler = async (
       tax_number: taxNumber,
       address,
       note,
-      updated_by: req["user"].username,
+      updated_by: req["user"].userId,
     });
 
     if (!currentBranch) {
-      return res.status(404).json({ message: "Branch not found." });
+      return res.status(404).json({
+        message: "Branch not found.",
+      });
     }
 
     res
@@ -154,7 +171,9 @@ const deleteBranch: Handler = async (
 
     await branchRepository.delete(id);
 
-    res.status(200).json({ message: "Delete branch successfully." });
+    res.status(200).json({
+      message: "Delete branch successfully.",
+    });
   } catch (error) {
     error.methodName = deleteBranch.name;
     next(error);

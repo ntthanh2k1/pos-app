@@ -38,8 +38,8 @@ const getUnits: Handler = async (
       req.query;
     const filters: Record<string, any> = {};
 
-    if (typeof isActive === "boolean") {
-      filters.is_active = isActive;
+    if (typeof isActive === "string") {
+      filters.is_active = isActive === "true";
     }
 
     const filterData: any = {
@@ -57,7 +57,9 @@ const getUnits: Handler = async (
 
     const units = await unitRepository.getAll(filterData);
 
-    res.status(200).json({ ...units });
+    res.status(200).json({
+      ...units,
+    });
   } catch (error) {
     error.methodName = getUnits.name;
     next(error);
@@ -74,7 +76,9 @@ const getUnit: Handler = async (
     const currentUnit = await unitRepository.getOneBy({ unit_id: id });
 
     if (!currentUnit) {
-      return res.status(404).json({ message: "Unit not found." });
+      return res.status(404).json({
+        message: "Unit not found.",
+      });
     }
 
     res.status(200).json({ data: currentUnit });
@@ -101,7 +105,9 @@ const updateUnit: Handler = async (
     });
 
     if (!currentUnit) {
-      return res.status(404).json({ message: "Unit not found." });
+      return res.status(404).json({
+        message: "Unit not found.",
+      });
     }
 
     res.status(200).json({

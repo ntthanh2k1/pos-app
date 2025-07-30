@@ -6,20 +6,20 @@ import {
   createBusiness,
   deleteBusiness,
   getBusiness,
-  getBusinesses,
   updateBusiness,
 } from "./business.controller";
-import GetBusinessesDto from "./dto/get-businesses.dto";
 import UpdateBusinessDto from "./dto/update-business.dto";
 
 const router = express.Router();
 
-router.use(authorize());
-
 router.post("/", validateDto(CreateBusinessDto), createBusiness);
-router.get("/", validateDto(GetBusinessesDto, "query"), getBusinesses);
-router.get("/:id", getBusiness);
-router.patch("/:id", validateDto(UpdateBusinessDto), updateBusiness);
-router.delete("/:id", deleteBusiness);
+router.get("/:id", authorize(), getBusiness);
+router.patch(
+  "/:id",
+  authorize(),
+  validateDto(UpdateBusinessDto),
+  updateBusiness
+);
+router.delete("/:id", authorize(), deleteBusiness);
 
 export default router;

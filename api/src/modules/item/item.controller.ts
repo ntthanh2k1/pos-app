@@ -18,7 +18,7 @@ const createItem: Handler = async (
       image,
       cost,
       note,
-      created_by: req["user"].username,
+      created_by: req["user"].userId,
     });
 
     res.status(201).json({
@@ -58,8 +58,8 @@ const getItems: Handler = async (
       filters.unit_id = unitId;
     }
 
-    if (typeof isActive === "boolean") {
-      filters.is_active = isActive;
+    if (typeof isActive === "string") {
+      filters.is_active = isActive === "true";
     }
 
     const filterData: any = {
@@ -76,7 +76,9 @@ const getItems: Handler = async (
     };
     const items = await itemRepository.getItems(filterData);
 
-    res.status(200).json({ ...items });
+    res.status(200).json({
+      ...items,
+    });
   } catch (error) {
     error.methodName = getItems.name;
     next(error);
@@ -95,10 +97,14 @@ const getItem: Handler = async (
     });
 
     if (!currentItem) {
-      return res.status(404).json({ message: "Item not found." });
+      return res.status(404).json({
+        message: "Item not found.",
+      });
     }
 
-    res.status(200).json({ data: currentItem });
+    res.status(200).json({
+      data: currentItem,
+    });
   } catch (error) {
     error.methodName = getItem.name;
     next(error);
@@ -122,16 +128,19 @@ const updateItem: Handler = async (
       cost,
       note,
       is_active: isActive,
-      updated_by: req["user"].username,
+      updated_by: req["user"].userId,
     });
 
     if (!currentItem) {
-      return res.status(404).json({ message: "Item not found." });
+      return res.status(404).json({
+        message: "Item not found.",
+      });
     }
 
-    res
-      .status(200)
-      .json({ message: "Update item successfully.", data: currentItem });
+    res.status(200).json({
+      message: "Update item successfully.",
+      data: currentItem,
+    });
   } catch (error) {
     error.methodName = updateItem.name;
     next(error);
@@ -148,7 +157,9 @@ const deleteItem: Handler = async (
 
     await itemRepository.delete(id);
 
-    res.status(200).json({ message: "Delete item successfully." });
+    res.status(200).json({
+      message: "Delete item successfully.",
+    });
   } catch (error) {
     error.methodName = deleteItem.name;
     next(error);

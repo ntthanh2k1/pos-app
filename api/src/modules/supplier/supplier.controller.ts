@@ -55,8 +55,8 @@ const getSuppliers: Handler = async (
       filters.business_id = businessId;
     }
 
-    if (typeof isActive === "boolean") {
-      filters.is_active = isActive;
+    if (typeof isActive === "string") {
+      filters.is_active = isActive === "true";
     }
 
     const filterData: any = {
@@ -73,7 +73,9 @@ const getSuppliers: Handler = async (
     };
     const suppliers = await supplierRepository.getAll(filterData);
 
-    res.status(200).json({ ...suppliers });
+    res.status(200).json({
+      ...suppliers,
+    });
   } catch (error) {
     error.methodName = getSuppliers.name;
     next(error);
@@ -92,7 +94,9 @@ const getSupplier: Handler = async (
     });
 
     if (!currentSupplier) {
-      return res.status(400).json({ message: "Supplier not found." });
+      return res.status(400).json({
+        message: "Supplier not found.",
+      });
     }
 
     res.status(200).json({ data: currentSupplier });
@@ -123,7 +127,9 @@ const updateSupplier: Handler = async (
     });
 
     if (!currentSupplier) {
-      return res.status(400).json({ message: "Supplier not found." });
+      return res.status(400).json({
+        message: "Supplier not found.",
+      });
     }
 
     res.status(200).json({
@@ -146,7 +152,9 @@ const deleteSupplier: Handler = async (
 
     await supplierRepository.delete(id);
 
-    res.status(200).json({ message: "Delete supplier successfully." });
+    res.status(200).json({
+      message: "Delete supplier successfully.",
+    });
   } catch (error) {
     error.methodName = deleteSupplier.name;
     next(error);

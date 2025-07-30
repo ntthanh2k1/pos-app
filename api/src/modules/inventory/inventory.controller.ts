@@ -1,6 +1,7 @@
 import { Handler, NextFunction, Request, Response } from "express";
 import createCode from "../../shared/utils/create-code";
 import inventoryRepository from "../../repositories/inventory.repository";
+import branchInventoryRepository from "../../repositories/branch-inventory.repository";
 
 const createInventory: Handler = async (
   req: Request,
@@ -8,14 +9,25 @@ const createInventory: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { businessId, name, note } = req.body;
+    const { name, phone, email, address, note } = req.body;
     const code = createCode("IY");
     const newInventory = await inventoryRepository.create({
-      business_id: businessId,
+      business_id: req["user"].businessId,
       code,
       name,
+      phone,
+      email,
+      address,
       note,
-      created_by: req["user"].username,
+      created_by: req["user"].userId,
+    });
+
+    // create branch-inventory
+    await branchInventoryRepository.create({
+      inventory_id: newInventory.inventory_id,
+      branch_id: req["user"].branchId,
+      business_id: req["user"].businessId,
+      created_by: req["user"].userId,
     });
 
     res.status(201).json({
@@ -73,7 +85,9 @@ const getInventories: Handler = async (
     };
     const inventories = await inventoryRepository.getInventories(filterData);
 
-    res.status(200).json({ ...inventories });
+    res.status(200).json({
+      ...inventories,
+    });
   } catch (error) {
     error.methodName = getInventories.name;
     next(error);
@@ -92,10 +106,14 @@ const getInventory: Handler = async (
     });
 
     if (!currentInventory) {
-      return res.status(404).json({ message: "Inventory not found." });
+      return res.status(404).json({
+        message: "Inventory not found.",
+      });
     }
 
-    res.status(200).json({ data: currentInventory });
+    res.status(200).json({
+      data: currentInventory,
+    });
   } catch (error) {
     error.methodName = getInventory.name;
     next(error);
@@ -113,11 +131,13 @@ const updateInventory: Handler = async (
     const currentInventory = await inventoryRepository.update(id, {
       name,
       note,
-      updated_by: req["user"].username,
+      updated_by: req["user"].userId,
     });
 
     if (!currentInventory) {
-      return res.status(404).json({ message: "Inventory not found." });
+      return res.status(404).json({
+        message: "Inventory not found.",
+      });
     }
 
     res.status(200).json({
@@ -140,7 +160,9 @@ const deleteInventory: Handler = async (
 
     await inventoryRepository.delete(id);
 
-    res.status(200).json({ message: "Delete inventory successfully." });
+    res.status(200).json({
+      message: "Delete inventory successfully.",
+    });
   } catch (error) {
     error.methodName = deleteInventory.name;
     next(error);
