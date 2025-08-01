@@ -17,8 +17,8 @@ const router = express.Router();
 
 router.post("/register", validateDto(RegisterDto), register);
 router.post("/login", validateDto(LoginDto), login);
-router.post("/refresh-token", refreshToken);
 router.post("/logout", authorize(false), logout);
+router.post("/refresh-token", refreshToken);
 router.get("/get-auth-user", authorize(false), getAuthUser);
 router.patch(
   "/change-password",

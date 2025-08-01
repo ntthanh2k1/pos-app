@@ -1,5 +1,4 @@
 import { Handler, NextFunction, Request, Response } from "express";
-import createCode from "../../shared/utils/create-code";
 import { hashPassword, verifyPassword } from "../../shared/utils/password";
 import {
   createAccessToken,
@@ -13,105 +12,41 @@ import TokenPayload from "../../shared/interfaces/token-payload.interface";
 import { REDIS_PREFIX } from "../../shared/utils/constant";
 import branchUserRepository from "../../repositories/branch-user.repository";
 import branchRepository from "../../repositories/branch.repository";
+import authService from "./auth.service";
 
-const register: Handler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
+const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, phone, username, password, confirmPassword } = req.body;
-    const currentUser = await userRepository.getOneBy({ username });
+    const result = await authService.register(req.body);
 
-    if (currentUser) {
-      return res.status(400).json({
-        message: `User ${username} already exists.`,
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        message: "Password and confirm password not match.",
-      });
-    }
-
-    const userCode = createCode("UR");
-    const hashedPassword = await hashPassword(password);
-    const newUser = await userRepository.create({
-      code: userCode,
-      name,
-      phone,
-      username,
-      password: hashedPassword,
-    });
-
-    res.status(201).json({
-      message: "Register successfully.",
-      data: {
-        user_id: newUser.user_id,
-        user_code: newUser.code,
-        name: newUser.name,
-        username: newUser.username,
-      },
-    });
+    res.status(201).json(result);
   } catch (error) {
     error.methodName = register.name;
     next(error);
   }
 };
 
-const login: Handler = async (
+const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await authService.login(req.body, res);
+
+    res.status(200).json(result);
+  } catch (error) {
+    error.methodName = login.name;
+    next(error);
+  }
+};
+
+const logout: Handler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { username, password } = req.body;
-    const currentUser = await userRepository.getOneBy({ username });
+    const result = await authService.logout(req, res);
 
-    if (!currentUser) {
-      return res.status(404).json({
-        message: `User ${username} not exists.`,
-      });
-    }
-
-    if (!currentUser.is_active) {
-      return res.status(400).json({
-        message: `User ${username} not activates.`,
-      });
-    }
-
-    const isPasswordValid = await verifyPassword(
-      currentUser.password,
-      password
-    );
-
-    if (!isPasswordValid) {
-      return res.status(400).json({
-        message: "Password not valid.",
-      });
-    }
-
-    const tokenPayload: TokenPayload = {
-      businessId: currentUser.business_id,
-      userId: currentUser.user_id,
-      username: currentUser.username,
-      jti: crypto.randomUUID(),
-    };
-    const accessToken = await createAccessToken(tokenPayload, res);
-    const refreshToken = await createRefreshToken(tokenPayload, res);
-
-    res.status(200).json({
-      message: "Login successfully.",
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      data: {
-        userId: currentUser.user_id,
-        username: currentUser.username,
-      },
-    });
+    res.status(200).json(result);
   } catch (error) {
-    error.methodName = login.name;
+    error.methodName = logout.name;
     next(error);
   }
 };
@@ -185,29 +120,6 @@ const refreshToken: Handler = async (
     }
 
     error.methodName = refreshToken.name;
-    next(error);
-  }
-};
-
-const logout: Handler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
-  try {
-    const authUser = req["user"];
-
-    await redisConfig.deleteValue(
-      `${REDIS_PREFIX}:*:${authUser.username}:${authUser.jti}`
-    );
-    res.clearCookie("access_token");
-    res.clearCookie("refresh_token");
-
-    res.status(200).json({
-      message: "Logout successfully.",
-    });
-  } catch (error) {
-    error.methodName = logout.name;
     next(error);
   }
 };
