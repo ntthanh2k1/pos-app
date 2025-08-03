@@ -1,5 +1,6 @@
 import { useSidebarStore } from "@/store/sidebar-store";
-import { Flex, Text } from "@chakra-ui/react";
+import { createTreeCollection, Flex, Text, TreeView } from "@chakra-ui/react";
+import { LuExternalLink } from "react-icons/lu";
 
 const Sidebar = () => {
   const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
@@ -27,6 +28,9 @@ const Sidebar = () => {
           POS
         </Text>
       </Flex>
+
+      {/* This is a component for tree view in sidebar */}
+
       <Flex>Tree view</Flex>
     </Flex>
   );
