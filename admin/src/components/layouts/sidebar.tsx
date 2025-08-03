@@ -1,6 +1,5 @@
 import { useSidebarStore } from "@/store/sidebar-store";
-import { createTreeCollection, Flex, Text, TreeView } from "@chakra-ui/react";
-import { LuExternalLink } from "react-icons/lu";
+import { Flex, Text } from "@chakra-ui/react";
 
 const Sidebar = () => {
   const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);

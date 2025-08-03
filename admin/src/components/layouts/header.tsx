@@ -1,4 +1,13 @@
-import { Avatar, Flex, IconButton, Menu, Portal, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  createListCollection,
+  Flex,
+  IconButton,
+  Menu,
+  Portal,
+  Select,
+  Text,
+} from "@chakra-ui/react";
 import { useColorMode } from "../ui/color-mode";
 import { LuMoon, LuSun } from "react-icons/lu";
 import { Link } from "react-router-dom";
@@ -9,11 +18,29 @@ const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
-  const username = "thanhnt";
+  const authUser = {
+    businessId: "0",
+    branchId: "1",
+    userId: "1",
+    username: "thanhnt",
+    jti: "123",
+  };
+
+  const branches = createListCollection({
+    items: [
+      { value: "0", label: "Branch 0" },
+      { value: "1", label: "Branch 1" },
+      { value: "2", label: "Branch 2" },
+    ],
+  });
+
+  const selectBranch = (branchId: string[]) => {
+    console.log("Select branch successfully.", branchId);
+  };
 
   return (
     <Flex h="16" justify="space-between" align="center" borderBottom="solid">
-      <Flex ml="3">
+      <Flex align="center" gap="2" ml="3">
         <IconButton
           aria-label="Toggle sidebar"
           variant="ghost"
@@ -22,13 +49,48 @@ const Header = () => {
         >
           <RxHamburgerMenu />
         </IconButton>
+
+        <Select.Root
+          collection={branches}
+          size="sm"
+          width="240px"
+          defaultValue={[authUser.branchId]}
+          onValueChange={(branch) => {
+            selectBranch(branch.value);
+          }}
+        >
+          <Select.HiddenSelect />
+          <Select.Control>
+            <Select.Trigger>
+              <Select.ValueText placeholder="Select movie" />
+            </Select.Trigger>
+            <Select.IndicatorGroup>
+              <Select.Indicator />
+            </Select.IndicatorGroup>
+          </Select.Control>
+          <Portal>
+            <Select.Positioner>
+              <Select.Content>
+                {branches.items.map((branch) => (
+                  <Select.Item item={branch} key={branch.value}>
+                    {branch.label}
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Positioner>
+          </Portal>
+        </Select.Root>
       </Flex>
+
       <Flex align="center" gap="2" mr="3">
         <Menu.Root>
           <Menu.Trigger asChild>
             <Flex align="center" gap="2" cursor="pointer">
               <Text>
-                {username.length > 5 ? `${username.slice(0, 5)}...` : username}
+                {authUser.username.length > 5
+                  ? `${authUser.username.slice(0, 5)}...`
+                  : authUser.username}
               </Text>
               <Avatar.Root>
                 <Avatar.Fallback />
@@ -49,6 +111,7 @@ const Header = () => {
             </Menu.Positioner>
           </Portal>
         </Menu.Root>
+
         <IconButton
           aria-label="Toggle theme mode"
           variant="ghost"

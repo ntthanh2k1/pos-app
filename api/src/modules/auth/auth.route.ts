@@ -8,6 +8,7 @@ import {
   logout,
   refreshToken,
   register,
+  selectBranch,
 } from "./auth.controller";
 import LoginDto from "./dtos/login.dto";
 import authorize from "../../middleware/auth.middleware";
@@ -26,6 +27,6 @@ router.patch(
   validateDto(ChangePasswordDto),
   changePassword
 );
-router.post("/select-branch", authorize(false), changePassword);
+router.post("/select-branch", authorize(false), selectBranch);
 
 export default router;
