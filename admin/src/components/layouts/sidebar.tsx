@@ -4,7 +4,7 @@ import { Flex, Text } from "@chakra-ui/react";
 const Sidebar = () => {
   const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
   const isSidebarHovered = useSidebarStore((state) => state.isSidebarHovered);
-  const setSidebarHovered = useSidebarStore((state) => state.setSidebarHovered);
+  // const setSidebarHovered = useSidebarStore((state) => state.setSidebarHovered);
   const sidebarWidth = isSidebarOpen || isSidebarHovered ? "56" : "20";
 
   return (
@@ -14,8 +14,9 @@ const Sidebar = () => {
       borderEnd="solid"
       transition="width 0.2s ease-in-out"
       overflow="hidden"
-      onMouseEnter={() => setSidebarHovered(true)}
-      onMouseLeave={() => setSidebarHovered(false)}
+      // onMouseEnter={() => setSidebarHovered(true)}
+      // onMouseLeave={() => setSidebarHovered(false)}
+      display={{ base: "none", md: "flex" }}
     >
       <Flex h="16" align="center" justify="center" borderBottom="solid">
         <Text

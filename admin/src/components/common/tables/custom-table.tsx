@@ -6,7 +6,7 @@ const CustomTable = ({ items, visibleColumns }: any) => {
   }
 
   return (
-    <Table.ScrollArea borderWidth="1px" minW="6xl">
+    <Table.ScrollArea borderWidth="1px" w="full" maxW="5xl">
       <Table.Root showColumnBorder stickyHeader interactive>
         <Table.Header>
           <Table.Row bg="blue.subtle">

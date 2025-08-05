@@ -14,7 +14,7 @@ const MainLayout = () => {
         <Header />
 
         {/* Content */}
-        <Flex w="full" flex="1" px="5">
+        <Flex w="full" flex="1">
           <Outlet />
         </Flex>
       </Flex>
