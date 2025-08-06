@@ -1,12 +1,11 @@
 import { useSidebarStore } from "@/store/sidebar-store";
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 
 const Sidebar = () => {
   const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
   const isSidebarHovered = useSidebarStore((state) => state.isSidebarHovered);
-  const sidebarWidth = useSidebarStore((state) => state.getSidebarWidth());
   // const setSidebarHovered = useSidebarStore((state) => state.setSidebarHovered);
-  // const sidebarWidth = isSidebarOpen || isSidebarHovered ? "56" : "20";
+  const sidebarWidth = useSidebarStore((state) => state.getSidebarWidth());
 
   return (
     <Flex
@@ -43,11 +42,13 @@ const Sidebar = () => {
       </Flex>
 
       {/* This is a component for tree view in sidebar */}
-      <Flex className="scrollbar-hidden" direction="column" overflowY="auto">
-        {Array.from({ length: 100 }).map((_, i) => (
-          <Text key={i}>Tree view item {i + 1}</Text>
-        ))}
-      </Flex>
+      <Box className="scrollbar-hidden" overflowY="auto">
+        <Flex direction="column" mt="5">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <Text key={i}>Tree view item {i + 1}</Text>
+          ))}
+        </Flex>
+      </Box>
     </Flex>
   );
 };
