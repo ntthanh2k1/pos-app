@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import userRepository from "../../repositories/user.repository";
 import createCode from "../../shared/utils/create-code";
 import CustomError from "../../shared/utils/custom-error";

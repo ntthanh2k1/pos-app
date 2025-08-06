@@ -1,9 +1,5 @@
 import { Handler, NextFunction, Request, Response } from "express";
-import { createAccessToken } from "../../shared/utils/token";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
-import TokenPayload from "../../shared/interfaces/token-payload.interface";
-import branchUserRepository from "../../repositories/branch-user.repository";
-import branchRepository from "../../repositories/branch.repository";
 import authService from "./auth.service";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {

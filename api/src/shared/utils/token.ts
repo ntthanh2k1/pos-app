@@ -1,4 +1,3 @@
-import { Response } from "express";
 import jwt from "jsonwebtoken";
 import redisConfig from "../../config/redis/redis.config";
 import TokenPayload from "../interfaces/token-payload.interface";
