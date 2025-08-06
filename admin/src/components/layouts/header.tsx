@@ -17,6 +17,7 @@ import { useSidebarStore } from "@/store/sidebar-store";
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
+  const sidebarWidth = useSidebarStore((state) => state.getSidebarWidth());
 
   const authUser = {
     businessId: "0",
@@ -39,7 +40,18 @@ const Header = () => {
   };
 
   return (
-    <Flex h="16" justify="space-between" align="center" borderBottom="solid">
+    <Flex
+      w={`calc(100% - ${sidebarWidth})`}
+      h="16"
+      left={sidebarWidth}
+      justify="space-between"
+      align="center"
+      borderBottom="solid"
+      position="sticky"
+      top="0"
+      zIndex="1000"
+      bg="bg.subtle"
+    >
       <Flex align="center" gap="2" ml="3">
         <IconButton
           aria-label="Toggle sidebar"
@@ -62,7 +74,7 @@ const Header = () => {
           <Select.HiddenSelect />
           <Select.Control>
             <Select.Trigger>
-              <Select.ValueText placeholder="Select movie" />
+              <Select.ValueText placeholder="Select branch" />
             </Select.Trigger>
             <Select.IndicatorGroup>
               <Select.Indicator />

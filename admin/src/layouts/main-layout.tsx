@@ -5,7 +5,7 @@ import Header from "@/components/layouts/header";
 
 const MainLayout = () => {
   return (
-    <Flex minH="100vh" w="full">
+    <Flex minH="100vh">
       {/* Sidebar */}
       <Sidebar />
 
@@ -14,7 +14,7 @@ const MainLayout = () => {
         <Header />
 
         {/* Content */}
-        <Flex w="full" flex="1">
+        <Flex flex="1" px="10">
           <Outlet />
         </Flex>
       </Flex>

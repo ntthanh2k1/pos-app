@@ -5,9 +5,10 @@ interface SidebarState {
   isSidebarHovered: boolean;
   setSidebarOpen: () => void;
   setSidebarHovered: (hovered: boolean) => void;
+  getSidebarWidth: () => string;
 }
 
-export const useSidebarStore = create<SidebarState>((set) => ({
+export const useSidebarStore = create<SidebarState>((set, get) => ({
   isSidebarOpen: true,
 
   isSidebarHovered: false,
@@ -17,4 +18,9 @@ export const useSidebarStore = create<SidebarState>((set) => ({
 
   setSidebarHovered: (hovered: boolean) =>
     set((state) => ({ ...state, isSidebarHovered: hovered })),
+
+  getSidebarWidth: () => {
+    const { isSidebarOpen, isSidebarHovered } = get();
+    return isSidebarOpen || isSidebarHovered ? "56" : "20"; // chakra: "56" = 14rem, "20" = 5rem
+  },
 }));
