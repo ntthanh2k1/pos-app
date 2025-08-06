@@ -43,6 +43,9 @@ class Supplier {
   @Column({ default: true })
   is_active: boolean;
 
+  @Column({ default: false })
+  is_deleted: boolean;
+
   @Column({ type: "varchar", length: 256, nullable: true })
   created_by: string;
 

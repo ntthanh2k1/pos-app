@@ -28,9 +28,21 @@ const inventoryRepository = {
       },
       (qb) =>
         qb
-          .leftJoin("entity.branch_inventories", "branch_inventories")
-          .leftJoin("branch_inventories.branch", "branch")
-          .leftJoin("entity.business", "business")
+          .leftJoin(
+            "entity.branch_inventories",
+            "branch_inventories",
+            "branch_inventories.is_deleted = false"
+          )
+          .leftJoin(
+            "branch_inventories.branch",
+            "branch",
+            "branch.is_deleted = false"
+          )
+          .leftJoin(
+            "entity.business",
+            "business",
+            "business.is_deleted = false"
+          )
           .addSelect([
             "business.business_id",
             "business.code",

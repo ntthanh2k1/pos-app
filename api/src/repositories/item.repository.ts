@@ -10,8 +10,12 @@ const itemRepository = {
   getItems: async (filterData: FilterData<Item>) => {
     return await base.getAll(filterData, (qb) =>
       qb
-        .leftJoin("entity.category_item", "category_item")
-        .leftJoin("entity.unit", "unit")
+        .leftJoin(
+          "entity.category_item",
+          "category_item",
+          "category_item.is_deleted = false"
+        )
+        .leftJoin("entity.unit", "unit", "unit.is_deleted = false")
         .addSelect([
           "category_item.category_item_id",
           "category_item.code",
@@ -27,8 +31,12 @@ const itemRepository = {
   getItem: async (condition: Partial<Item>) => {
     return await base.getOneBy(condition, (qb) =>
       qb
-        .leftJoin("entity.category_item", "category_item")
-        .leftJoin("entity.unit", "unit")
+        .leftJoin(
+          "entity.category_item",
+          "category_item",
+          "category_item.is_deleted = false"
+        )
+        .leftJoin("entity.unit", "unit", "unit.is_deleted = false")
         .addSelect([
           "category_item.category_item_id",
           "category_item.code",

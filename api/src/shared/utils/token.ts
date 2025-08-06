@@ -4,7 +4,7 @@ import redisConfig from "../../config/redis/redis.config";
 import TokenPayload from "../interfaces/token-payload.interface";
 import { REDIS_PREFIX } from "./constant";
 
-const createAccessToken = async (tokenPayload: TokenPayload, res: Response) => {
+const createAccessToken = async (tokenPayload: TokenPayload) => {
   const accessToken = jwt.sign(
     {
       userId: tokenPayload.userId,
@@ -23,20 +23,10 @@ const createAccessToken = async (tokenPayload: TokenPayload, res: Response) => {
     parseInt(process.env.ACCESS_TOKEN_TTL)
   );
 
-  res.cookie("access_token", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: parseInt(process.env.ACCESS_TOKEN_TTL) * 1000,
-  });
-
   return accessToken;
 };
 
-const createRefreshToken = async (
-  tokenPayload: TokenPayload,
-  res: Response
-) => {
+const createRefreshToken = async (tokenPayload: TokenPayload) => {
   const refreshToken = jwt.sign(
     {
       userId: tokenPayload.userId,
@@ -54,13 +44,6 @@ const createRefreshToken = async (
     refreshToken,
     parseInt(process.env.REFRESH_TOKEN_TTL)
   );
-
-  res.cookie("refresh_token", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: parseInt(process.env.REFRESH_TOKEN_TTL) * 1000,
-  });
 
   return refreshToken;
 };

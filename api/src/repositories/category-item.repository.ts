@@ -13,7 +13,7 @@ const categoryItemRepository = {
   getCategoryItems: async (filterData: FilterData<CategoryItem>) => {
     return await base.getAll(filterData, (qb) =>
       qb
-        .leftJoin("entity.parent", "parent")
+        .leftJoin("entity.parent", "parent", "parent.is_deleted = false")
         .addSelect(["parent.category_item_id", "parent.code", "parent.name"])
     );
   },
@@ -21,7 +21,7 @@ const categoryItemRepository = {
   getCategoryItem: async (condition: Partial<CategoryItem>) => {
     return await base.getOneBy(condition, (qb) =>
       qb
-        .leftJoin("entity.parent", "parent")
+        .leftJoin("entity.parent", "parent", "parent.is_deleted = false")
         .addSelect(["parent.category_item_id", "parent.code", "parent.name"])
     );
   },

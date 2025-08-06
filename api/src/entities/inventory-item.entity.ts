@@ -39,6 +39,9 @@ class InventoryItem {
   @Column({ type: "int", default: 0 })
   quantity: number;
 
+  @Column({ default: false })
+  is_deleted: boolean;
+
   @Column({ type: "varchar", length: 256, nullable: true })
   created_by: string;
 

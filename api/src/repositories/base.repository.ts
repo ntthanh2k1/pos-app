@@ -18,7 +18,9 @@ const baseRepository = <T>(
     ): Promise<PaginateData<T>> => {
       const { page, limit, search, searchColumns, filters, orderBy, orderDir } =
         filterData;
-      const queryBuilder = repository.createQueryBuilder("entity");
+      const queryBuilder = repository
+        .createQueryBuilder("entity")
+        .where("entity.is_deleted = false");
 
       if (extendQuery) {
         extendQuery(queryBuilder);
@@ -80,7 +82,9 @@ const baseRepository = <T>(
       condition: Partial<T>,
       extendQuery?: (qb: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
     ): Promise<T | null> => {
-      const queryBuilder = repository.createQueryBuilder("entity");
+      const queryBuilder = repository
+        .createQueryBuilder("entity")
+        .where("entity.is_deleted = false");
 
       if (extendQuery) {
         extendQuery(queryBuilder);
@@ -108,6 +112,18 @@ const baseRepository = <T>(
       }
 
       return await repository.save({ ...existing, ...data } as any);
+    },
+
+    softDelete: async (id: number | string): Promise<T | null> => {
+      const existing = await repository.findOne({
+        where: { [primaryKey]: id } as any,
+      } as any);
+
+      if (!existing) {
+        return null;
+      }
+
+      return await repository.save({ ...existing, is_deleted: true } as any);
     },
 
     delete: async (id: number | string): Promise<void> => {

@@ -27,6 +27,9 @@ class BranchInventory {
   @Column({ type: "uuid", nullable: true })
   business_id: string;
 
+  @Column({ default: false })
+  is_deleted: boolean;
+
   @Column({ type: "varchar", length: 256, nullable: true })
   created_by: string;
 
