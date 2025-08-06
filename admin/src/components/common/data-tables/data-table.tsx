@@ -1,6 +1,6 @@
 import { Flex, Pagination, Table } from "@chakra-ui/react";
 
-const CustomTable = ({ items, visibleColumns }: any) => {
+const DataTable = ({ items, visibleColumns }: any) => {
   if (!items || items.length === 0) {
     return <div>No data</div>;
   }
@@ -35,4 +35,4 @@ const CustomTable = ({ items, visibleColumns }: any) => {
   );
 };
 
-export default CustomTable;
+export default DataTable;

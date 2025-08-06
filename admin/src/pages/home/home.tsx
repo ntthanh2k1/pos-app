@@ -1,4 +1,4 @@
-import CustomTable from "@/components/common/tables/custom-table";
+import CustomTable from "@/components/common/data-tables/data-table";
 import { Flex } from "@chakra-ui/react";
 
 const Home = () => {
