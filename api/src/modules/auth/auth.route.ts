@@ -20,6 +20,7 @@ router.post("/register", validateDto(RegisterDto), register);
 router.post("/login", validateDto(LoginDto), login);
 router.post("/logout", authorize(false), logout);
 router.post("/refresh-token", refreshToken);
+router.post("/select-branch", authorize(false), selectBranch);
 router.get("/get-auth-user", authorize(false), getAuthUser);
 router.patch(
   "/change-password",
@@ -27,6 +28,5 @@ router.patch(
   validateDto(ChangePasswordDto),
   changePassword
 );
-router.post("/select-branch", authorize(false), selectBranch);
 
 export default router;
