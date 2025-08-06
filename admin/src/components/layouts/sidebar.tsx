@@ -43,20 +43,7 @@ const Sidebar = () => {
       </Flex>
 
       {/* This is a component for tree view in sidebar */}
-      <Flex
-        direction="column"
-        overflowY="auto"
-        css={{
-          /* Hide scrollbar (Chrome, Safari) */
-          "&::-webkit-scrollbar": {
-            display: "none",
-          },
-          /* Hide scrollbar (IE, Edge) */
-          msOverflowStyle: "none",
-          /* Hide scrollbar (Firefox) */
-          scrollbarWidth: "none",
-        }}
-      >
+      <Flex className="scrollbar-hidden" direction="column" overflowY="auto">
         {Array.from({ length: 100 }).map((_, i) => (
           <Text key={i}>Tree view item {i + 1}</Text>
         ))}
