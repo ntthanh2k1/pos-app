@@ -14,6 +14,9 @@ class CreateUserDto {
   username: string;
 
   @IsOptional()
+  password: string;
+
+  @IsOptional()
   image: string;
 
   @IsNotEmpty()

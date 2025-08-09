@@ -15,6 +15,7 @@ import TokenPayload from "../../shared/interfaces/token-payload.interface";
 import ChangePasswordDto from "./dtos/change-password.dto";
 import branchRepository from "../../repositories/branch.repository";
 import branchUserRepository from "../../repositories/branch-user.repository";
+import userService from "../user/user.service";
 
 const register = async (registerDto: RegisterDto) => {
   const { name, phone, username, password, confirmPassword } = registerDto;
@@ -146,16 +147,9 @@ const changePassword = async (
   authUser: TokenPayload
 ) => {
   const { currentPassword, newPassword, confirmPassword } = changePasswordDto;
-  const currentUser = await userRepository.getOneBy({
-    user_id: authUser.userId,
-  });
-
-  if (!currentUser) {
-    throw new CustomError("User not found.", 404);
-  }
-
+  const currentUser = await userService.getUser(authUser.userId);
   const isPasswordValid = await verifyPassword(
-    currentUser.password,
+    currentUser.data.password,
     currentPassword
   );
 
@@ -171,6 +165,7 @@ const changePassword = async (
 
   await userRepository.update(authUser.userId, {
     password: hashedPassword,
+    updated_by: authUser.userId,
   });
 
   await redisConfig.deleteKeysByPattern(

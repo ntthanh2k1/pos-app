@@ -16,7 +16,7 @@ import ChangePasswordDto from "./dtos/change-password.dto";
 
 const router = express.Router();
 
-router.post("/register", validateDto(RegisterDto), register);
+// router.post("/register", validateDto(RegisterDto), register);
 router.post("/login", validateDto(LoginDto), login);
 router.post("/logout", authorize(false), logout);
 router.post("/refresh-token", refreshToken);
