@@ -114,7 +114,10 @@ const baseRepository = <T>(
       return await repository.save({ ...existing, ...data } as any);
     },
 
-    softDelete: async (id: number | string): Promise<T | null> => {
+    softDelete: async (
+      id: number | string,
+      userId: string
+    ): Promise<T | null> => {
       const existing = await repository.findOne({
         where: { [primaryKey]: id } as any,
       } as any);
@@ -123,7 +126,11 @@ const baseRepository = <T>(
         return null;
       }
 
-      return await repository.save({ ...existing, is_deleted: true } as any);
+      return await repository.save({
+        ...existing,
+        is_deleted: true,
+        updated_by: userId,
+      } as any);
     },
 
     delete: async (id: number | string): Promise<void> => {

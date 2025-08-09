@@ -66,8 +66,7 @@ const refreshToken: Handler = async (
 ): Promise<any> => {
   try {
     const refreshToken = req.cookies["refresh_token"];
-    const dto = req.body;
-    const result = await authService.refreshToken(refreshToken, dto);
+    const result = await authService.refreshToken(refreshToken);
 
     res.cookie("access_token", result.accessToken, {
       httpOnly: true,
@@ -116,8 +115,9 @@ const changePassword: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
+    const dto = req.body;
     const authUser = req["user"];
-    const result = await authService.changePassword(authUser, req.body);
+    const result = await authService.changePassword(dto, authUser);
 
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");
@@ -135,9 +135,9 @@ const selectBranch: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const authUser = req["user"];
     const dto = req.body;
-    const result = await authService.selectBranch(authUser, dto);
+    const authUser = req["user"];
+    const result = await authService.selectBranch(dto, authUser);
 
     res.cookie("access_token", result.accessToken, {
       httpOnly: true,

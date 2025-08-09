@@ -16,8 +16,8 @@ import ChangePasswordDto from "./dtos/change-password.dto";
 import branchRepository from "../../repositories/branch.repository";
 import branchUserRepository from "../../repositories/branch-user.repository";
 
-const register = async (data: RegisterDto) => {
-  const { name, phone, username, password, confirmPassword } = data;
+const register = async (registerDto: RegisterDto) => {
+  const { name, phone, username, password, confirmPassword } = registerDto;
   const currentUser = await userRepository.getOneBy({ username });
 
   if (currentUser) {
@@ -28,10 +28,10 @@ const register = async (data: RegisterDto) => {
     throw new CustomError("Password and confirm password not match.", 400);
   }
 
-  const userCode = createCode("UR");
+  const code = createCode("UR");
   const hashedPassword = await hashPassword(password);
   const newUser = await userRepository.create({
-    code: userCode,
+    code,
     name,
     phone,
     username,
@@ -47,8 +47,8 @@ const register = async (data: RegisterDto) => {
   };
 };
 
-const login = async (data: LoginDto) => {
-  const { username, password } = data;
+const login = async (loginDto: LoginDto) => {
+  const { username, password } = loginDto;
 
   const currentUser = await userRepository.getOneBy({ username });
 
@@ -93,9 +93,7 @@ const logout = async (authUser: TokenPayload) => {
   };
 };
 
-const refreshToken = async (refreshToken: string, data: any) => {
-  const { branchId } = data;
-
+const refreshToken = async (refreshToken: string) => {
   if (!refreshToken) {
     throw new CustomError("Refresh token not provided.", 401);
   }
@@ -123,7 +121,6 @@ const refreshToken = async (refreshToken: string, data: any) => {
 
   const tokenPayload = {
     businessId: decoded.business_id,
-    branchId,
     userId: decoded.userId,
     username: decoded.username,
     jti: decoded.jti,
@@ -145,10 +142,10 @@ const getAuthUser = async (authUser: TokenPayload) => {
 };
 
 const changePassword = async (
-  authUser: TokenPayload,
-  data: ChangePasswordDto
+  changePasswordDto: ChangePasswordDto,
+  authUser: TokenPayload
 ) => {
-  const { currentPassword, newPassword, confirmPassword } = data;
+  const { currentPassword, newPassword, confirmPassword } = changePasswordDto;
   const currentUser = await userRepository.getOneBy({
     user_id: authUser.userId,
   });
@@ -185,8 +182,8 @@ const changePassword = async (
   };
 };
 
-const selectBranch = async (authUser: TokenPayload, data: any) => {
-  const { branchId } = data;
+const selectBranch = async (dto: any, authUser: TokenPayload) => {
+  const { branchId } = dto;
   const currentBranch = await branchRepository.getOneBy({
     branch_id: branchId,
   });

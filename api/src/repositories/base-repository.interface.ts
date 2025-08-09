@@ -13,7 +13,7 @@ interface IBaseRepository<T> {
   ): Promise<T | null>;
   create(data: Partial<T>): Promise<T>;
   update(id: number | string, data: Partial<T>): Promise<T | null>;
-  softDelete(id: number | string): Promise<T | null>;
+  softDelete(id: number | string, userId: string): Promise<T | null>;
   delete(id: number | string): Promise<void>;
 }
 
