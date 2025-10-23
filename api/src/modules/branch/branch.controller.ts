@@ -3,6 +3,7 @@ import createCode from "../../shared/utils/create-code";
 import branchRepository from "../../repositories/branch.repository";
 import inventoryRepository from "../../repositories/inventory.repository";
 import branchInventoryRepository from "../../repositories/branch-inventory.repository";
+import branchService from "./branch.service";
 
 const createBranch: Handler = async (
   req: Request,
@@ -10,43 +11,11 @@ const createBranch: Handler = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { name, phone, email, taxNumber, address, note } = req.body;
+    const dto = req.body;
+    const authUser = req["user"];
+    const result = await branchService.createBranch(dto, authUser);
 
-    // create branch
-    const code = createCode("BH");
-    const newBranch = await branchRepository.create({
-      business_id: req["user"].businessId,
-      code,
-      name,
-      phone,
-      email,
-      tax_number: taxNumber,
-      address,
-      note,
-      created_by: req["user"].userId,
-    });
-
-    // create inventory
-    const inventoryCode = createCode("IY");
-    const newInventory = await inventoryRepository.create({
-      code: inventoryCode,
-      name: `${name}'s Main Inventory`,
-      is_main_inventory: true,
-      created_by: req["user"].userId,
-    });
-
-    // create branch-inventory
-    await branchInventoryRepository.create({
-      branch_id: newBranch.branch_id,
-      inventory_id: newInventory.inventory_id,
-      business_id: req["user"].businessId,
-      created_by: req["user"].userId,
-    });
-
-    res.status(201).json({
-      message: "Create branch successfully.",
-      data: newBranch,
-    });
+    res.status(201).json(result);
   } catch (error) {
     error.methodName = createBranch.name;
     next(error);
